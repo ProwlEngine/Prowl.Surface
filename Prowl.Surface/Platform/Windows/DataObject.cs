@@ -287,8 +287,8 @@ internal sealed class DataObject : CallbackBase, IDataObject, Win32Com.IDataObje
         using (var ms = new MemoryStream())
         {
             ms.Write(SerializedObjectGUID, 0, SerializedObjectGUID.Length);
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
             binaryFormatter.Serialize(ms, data);
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
             return ms.ToArray();
