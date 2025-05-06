@@ -18,10 +18,10 @@ public class Program
     private static SKSurface? canvas;
     private static SKColor? draw_color;
     private static Vector2? cursor_position;
-    private static bool show_diagnostics = true;
+    private static bool show_diagnostics = false;
     private static SKRect? anchor_rect;
 
-    private static SKColor[] touch_colors = new SKColor[] { SKColors.Yellow, SKColors.Blue, SKColors.Brown, SKColors.Purple, SKColors.Pink, SKColors.White, SKColors.Orange, SKColors.Black, SKColors.Coral, SKColors.Gray };
+    private static SKColor[] touch_colors = [SKColors.Yellow, SKColors.Blue, SKColors.Brown, SKColors.Purple, SKColors.Pink, SKColors.White, SKColors.Orange, SKColors.Black, SKColors.Coral, SKColors.Gray];
 
     private static string? open_file;
     private static string? open_folder;
@@ -100,6 +100,8 @@ public class Program
 
         if (show_diagnostics)
             OutputDiagnostics(surface.Canvas);
+        else
+            ShowInfo(surface.Canvas);
 
         if (anchor_rect.HasValue)
             surface.Canvas.DrawRect(anchor_rect.Value, new SKPaint { Color = SKColors.White, IsStroke = true });
@@ -177,7 +179,7 @@ public class Program
             // Use F9 key to open a File Open dialog
             if (e.Type == RawKeyEventType.KeyDown && e.Key == Prowl.Surface.Input.Key.F9)
             {
-                var result = await storageProvider.OpenFilePickerAsync(new Prowl.Surface.Platform.Storage.FilePickerOpenOptions { });
+                var result = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions { });
                 open_file = result?.FirstOrDefault()?.Name;
                 e.Handled = true;
             }
@@ -185,7 +187,7 @@ public class Program
             // Use F10 key to open a Folder Open dialog
             if (e.Type == RawKeyEventType.KeyDown && e.Key == Prowl.Surface.Input.Key.F10)
             {
-                var result = await storageProvider.OpenFolderPickerAsync(new Prowl.Surface.Platform.Storage.FolderPickerOpenOptions { });
+                var result = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions { });
                 open_folder = result?.FirstOrDefault()?.Name;
                 e.Handled = true;
             }
@@ -193,7 +195,7 @@ public class Program
             // Use F12 key to open a File Save dialog (F11 is a system key on Mac?)
             if (e.Type == RawKeyEventType.KeyDown && e.Key == Prowl.Surface.Input.Key.F12)
             {
-                var result = await storageProvider.SaveFilePickerAsync(new Prowl.Surface.Platform.Storage.FilePickerSaveOptions { });
+                var result = await storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { });
                 save_file = result?.Name;
                 e.Handled = true;
             }
@@ -219,6 +221,21 @@ public class Program
     }
 
     private static void Invalidate() => window.Invalidate(new Rect(Vector2.zero, window.ClientSize));
+
+    private static void ShowInfo(SKCanvas canvas)
+    {
+        var paint = new SKPaint { Color = SKColors.Black, IsAntialias = true, TextSize = Scale(16), SubpixelText = true, Typeface = SKTypeface.FromFamilyName(SKTypeface.Default.FamilyName, SKFontStyleWeight.SemiBold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright) };
+
+        int x = Scale(10);
+        var y = 0;
+        var line_height = Scale(25);
+
+        canvas.DrawText("F1: Show Diagnostics", x, y += line_height, paint);
+        canvas.DrawText("F9: Open File Picker", x, y += line_height, paint);
+        canvas.DrawText("F10: Open Folder Picker", x, y += line_height, paint);
+        canvas.DrawText("F12: Open File Saver", x, y += line_height, paint);
+        canvas.DrawText("P: Open Popup", x, y += line_height, paint);
+    }
 
     private static void OutputDiagnostics(SKCanvas canvas)
     {
