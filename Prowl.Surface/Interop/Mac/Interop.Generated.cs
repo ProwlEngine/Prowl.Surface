@@ -1,8 +1,7 @@
 #pragma warning disable 108
+
 using System;
-using System.Text;
-using System.Collections;
-using System.Collections.Generic;
+
 using Prowl.Surface.MicroCom;
 
 namespace Prowl.Surface.Mac.Interop
