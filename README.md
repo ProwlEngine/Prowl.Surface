@@ -8,7 +8,7 @@ This is a nearly direct port from [Avalonia](https://github.com/AvaloniaUI/Avalo
 
 # Sample Application
 
-There is a sample application in `samples/Demo`.
+There is a sample application in the `Demo` folder.
 
 This sample shows how to perform various operations such as:
 
