@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
-        <OutputType>Library</OutputType>
+        <OutputType>Exe</OutputType>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <NoWarn>8500</NoWarn> <!-- Takes the address of a managed type -->
@@ -30,5 +30,13 @@
 
     <ItemGroup>
         <PackageReference Include="TerraFX.Interop.Windows" Version="10.0.22621" />
+        <PackageReference Include="WaylandSharp" Version="0.2.1" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="WaylandProtocol" />
+      <AdditionalFiles Include="Platforms/Wayland/Protocols/wayland.xml" WaylandProtocol="client" />
+      <AdditionalFiles Include="Platforms/Wayland/Protocols/xdg-shell.xml" WaylandProtocol="client" />
     </ItemGroup>
 </Project>
