@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <OutputType>Library</OutputType>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <NoWarn>8500</NoWarn> <!-- Takes the address of a managed type -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>Prowl.Surface</PackageId>
+        <Version>0.1.1</Version>
+
+        <Authors>Alexandre Mutel, Prowl Group</Authors>
+        <Owners>Alexandre Mutel, Prowl Group</Owners>
+        <Copyright>Copyright (c) 2023 Alexandre Mutel; Copyright (2) 2025 Prowl Group.</Copyright>
+
+        <Description>Cross-platform windowing library.</Description>
+        <RepositoryUrl>https://github.com/xoofx/NWindows</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+
+        <PackageTags>windows linux mac cross-platform windowing appkit wayland win32</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="TerraFX.Interop.Windows" Version="10.0.22621" />
+    </ItemGroup>
+</Project>
