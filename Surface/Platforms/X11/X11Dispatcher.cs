@@ -19,13 +19,15 @@ internal unsafe class X11Dispatcher : Dispatcher
 {
     public X11Dispatcher(Thread thread) : base(thread)
     {
+        ScreenManager = new X11ScreenManager();
+        InputManager = new X11InputManager(this);
     }
 
-    internal override ScreenManager ScreenManager => throw new NotImplementedException();
 
-    internal override InputManager InputManager => throw new NotImplementedException();
+    internal override ScreenManager ScreenManager { get; }
 
-    internal override WindowSettingsImpl WindowSettings => throw new NotImplementedException();
+    internal override InputManager InputManager { get; }
+
 
     internal override void CreateOrResetTimer(DispatcherTimer timer, int millis) => throw new NotImplementedException();
 
