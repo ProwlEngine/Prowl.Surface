@@ -57,7 +57,6 @@ internal unsafe class Win32Window : Window
     private bool _minimizeable;
     private bool _allowDragAndDrop;
     private bool _windowIsActive;
-    private WindowThemeSyncMode _themeSyncMode;
 
     private Color _backgroundColor;
     private HBRUSH _backgroundColorBrush;
@@ -91,7 +90,6 @@ internal unsafe class Win32Window : Window
         _state = options.WindowState;
         _dpi = options.DpiMode == DpiMode.Auto ? default : options.ManualDpi;
         _dpiMode = options.DpiMode;
-        _themeSyncMode = options.ThemeSyncMode;
         if (options.BackgroundColor.HasValue)
         {
             UpdateBackgroundColor(options.BackgroundColor.Value, false);
@@ -189,23 +187,6 @@ internal unsafe class Win32Window : Window
             if (value != _dpiMode)
             {
                 UpdateDpiMode(value);
-            }
-        }
-    }
-
-    public override WindowThemeSyncMode ThemeSyncMode
-    {
-        get
-        {
-            VerifyAccess();
-            return _themeSyncMode;
-        }
-        set
-        {
-            VerifyAccessAndNotDestroyed();
-            if (value != _themeSyncMode)
-            {
-                UpdateThemeSyncMode(value);
             }
         }
     }
@@ -640,7 +621,7 @@ internal unsafe class Win32Window : Window
         return GetScreenFromHWnd(HWnd);
     }
 
-    private Screen? GetScreenFromHWnd(HWND hWnd)
+    private Win32Screen? GetScreenFromHWnd(HWND hWnd)
     {
         if (hWnd == IntPtr.Zero)
         {
@@ -875,38 +856,9 @@ internal unsafe class Win32Window : Window
                 UpdateStyleChanged((int)wParam, in *(STYLESTRUCT*)lParam);
                 result = 0;
                 break;
-
-            case WM_SETTINGCHANGE:
-                HandleSettingsChanged((int)wParam, (char*)lParam);
-                result = 0;
-                break;
         }
 
         return result;
-    }
-
-    private void HandleSettingsChanged(int wParam, char* lParam)
-    {
-        if (lParam == null) return;
-        var span = new Span<char>(lParam, int.MaxValue);
-        span = span.Slice(0, span.IndexOf((char)0));
-
-        if (span.SequenceEqual("ImmersiveColorSet"))
-        {
-            UpdateTheme();
-            OnFrameEvent(FrameChangeKind.ThemeChanged);
-        }
-    }
-
-    private void UpdateTheme()
-    {
-        if (!_isCompositionEnabled)
-        {
-            return;
-        }
-
-        BOOL value = _themeSyncMode == WindowThemeSyncMode.Auto ? WindowSettings.Theme == WindowTheme.Dark : _themeSyncMode == WindowThemeSyncMode.Dark;
-        DwmSetWindowAttribute(HWnd, (uint)DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE, &value, (uint)sizeof(BOOL));
     }
 
     private void UpdateStyleChanged(int wParam, in STYLESTRUCT styleStruct)
@@ -1348,12 +1300,12 @@ internal unsafe class Win32Window : Window
             rect.right = client.right;
             rect.bottom = client.bottom;
 
-            var screen = GetScreenFromHWnd(hWnd);
+            Win32Screen? screen = GetScreenFromHWnd(hWnd);
             if (screen != null)
             {
                 MONITORINFO mi = default;
                 mi.cbSize = (uint)sizeof(MONITORINFO);
-                GetMonitorInfoW((HMONITOR)screen.Handle, &mi);
+                GetMonitorInfoW(screen._monitorHandle, &mi);
 
                 /* If the client rectangle is the same as the monitor's rectangle,
                    the shell assumes that the window has gone fullscreen, so it removes
@@ -1813,17 +1765,6 @@ internal unsafe class Win32Window : Window
         if (_dpiMode != dpiMode)
         {
             OnFrameEvent(FrameChangeKind.DpiModeChanged);
-        }
-    }
-
-
-    private void UpdateThemeSyncMode(WindowThemeSyncMode value)
-    {
-        UpdateTheme();
-
-        if (_themeSyncMode != value)
-        {
-            OnFrameEvent(FrameChangeKind.ThemeSyncModeChanged);
         }
     }
 
@@ -2343,8 +2284,6 @@ internal unsafe class Win32Window : Window
 
             UpdateThemeActive();
             UpdateCompositionEnabled(_hasDecorations, false);
-
-            UpdateTheme();
 
             // Check for clipboard events
             AddClipboardFormatListener(HWnd);

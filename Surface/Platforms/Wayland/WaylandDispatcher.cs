@@ -26,8 +26,6 @@ internal unsafe class WaylandDispatcher : Dispatcher
 
     internal override InputManager InputManager => throw new NotImplementedException();
 
-    internal override WindowSettingsImpl WindowSettings => throw new NotImplementedException();
-
     internal override void CreateOrResetTimer(DispatcherTimer timer, int millis) => throw new NotImplementedException();
 
     internal override void DestroyTimer(DispatcherTimer timer) => throw new NotImplementedException();

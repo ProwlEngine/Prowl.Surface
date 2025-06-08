@@ -79,11 +79,6 @@ public abstract class Window : DispatcherObject, INativeWindow
     public abstract DpiMode DpiMode { get; set; }
 
     /// <summary>
-    /// Gets or sets how the theme of the Window is synced. Default is auto.
-    /// </summary>
-    public abstract WindowThemeSyncMode ThemeSyncMode { get; set; }
-
-    /// <summary>
     /// Gets or sets the background color.
     /// </summary>
     public abstract Color BackgroundColor { get; set; }

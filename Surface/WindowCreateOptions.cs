@@ -148,11 +148,6 @@ public sealed record WindowCreateOptions
     public DpiMode DpiMode { get; init; } = DpiMode.Auto;
 
     /// <summary>
-    /// Sets platform specific options.
-    /// </summary>
-    public WindowThemeSyncMode ThemeSyncMode { get; init; } = WindowThemeSyncMode.Auto;
-
-    /// <summary>
     /// Verify options and throw an exception if an invalid setup is provided.
     /// </summary>
     public void Verify()

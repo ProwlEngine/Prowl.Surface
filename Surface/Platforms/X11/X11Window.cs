@@ -20,7 +20,6 @@ internal unsafe class X11Window : Window
     public override bool Decorations { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override Dpi Dpi { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override DpiMode DpiMode { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override WindowThemeSyncMode ThemeSyncMode { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override Color BackgroundColor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool Enable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

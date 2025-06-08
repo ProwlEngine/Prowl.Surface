@@ -356,8 +356,6 @@ public abstract partial class Dispatcher
 
     internal abstract InputManager InputManager { get; }
 
-    internal abstract WindowSettingsImpl WindowSettings { get; }
-
     [DoesNotReturn]
     private static void ThrowInvalidAccess()
     {

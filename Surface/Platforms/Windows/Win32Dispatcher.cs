@@ -87,7 +87,6 @@ internal unsafe class Win32Dispatcher : Dispatcher
 
         ScreenManager = new Win32ScreenManager();
         InputManager = new Win32InputManager(this);
-        WindowSettings = new Win32WindowSettings();
 
         // Initialization of the keyboard hook only on the dispatcher thread
         lock (GlobalLock)
@@ -177,8 +176,6 @@ internal unsafe class Win32Dispatcher : Dispatcher
     internal override Win32ScreenManager ScreenManager { get; }
 
     internal override Win32InputManager InputManager { get; }
-
-    internal override WindowSettingsImpl WindowSettings { get; }
 
     internal override void WaitAndDispatchMessage(bool blockOnWait)
     {

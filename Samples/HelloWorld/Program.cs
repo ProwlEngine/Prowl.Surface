@@ -8,7 +8,7 @@ using Prowl.Surface.Threading;
 var mainWindow = Window.Create(new()
 {
     Title = "Hello World",
-    BackgroundColor = GetCurrentThemeColor(),
+    BackgroundColor = Color.Black,
     StartPosition = WindowStartPosition.CenterScreen,
 });
 
@@ -19,7 +19,7 @@ mainWindow.Events.Frame += (window, evt) =>
     if (evt.ChangeKind == FrameChangeKind.ThemeChanged)
     {
         // Update the background color if the theme changed
-        window.BackgroundColor = GetCurrentThemeColor();
+        window.BackgroundColor = Color.White;
     }
 };
 
@@ -33,5 +33,3 @@ mainWindow.Events.Keyboard += (_, evt) =>
 };
 
 Dispatcher.Current.Run();
-
-static Color GetCurrentThemeColor() => WindowSettings.Theme == WindowTheme.Light ? Color.FromArgb(245, 245, 245) : Color.FromArgb(30, 30, 30);
