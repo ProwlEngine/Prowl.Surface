@@ -4,6 +4,7 @@
 // Original source is Copyright © The Open Group
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace TerraFX.Interop.Xlib;
 
@@ -52,8 +53,7 @@ public static unsafe partial class Xlib
 
     public static int VendorRelease(XDisplay* dpy) => dpy->release;
 
-    [return: NativeTypeName("char *")]
-    public static sbyte* DisplayString(XDisplay* dpy) => dpy->display_name;
+    public static string DisplayString(XDisplay* dpy) => Marshal.PtrToStringAnsi((nint)dpy->display_name);
 
     public static int DefaultDepth(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root_depth;
 

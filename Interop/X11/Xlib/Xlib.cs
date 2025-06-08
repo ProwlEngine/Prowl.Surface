@@ -55,8 +55,18 @@ public static unsafe partial class Xlib
     public static partial sbyte* XFetchBuffer(XDisplay* param0, int* param1, int param2);
 
     [LibraryImport("libX11")]
-    [return: NativeTypeName("char *")]
-    public static partial sbyte* XGetAtomName(XDisplay* param0, Atom param1);
+    public static partial byte* XGetAtomName(XDisplay* param0, Atom param1);
+
+    public static string GetAtomName(XDisplay* display, Atom atom)
+    {
+        byte* atoms = XGetAtomName(display, atom);
+
+        string name = Marshal.PtrToStringAnsi((nint)atoms) ?? "";
+
+        XFree(atoms);
+
+        return name;
+    }
 
     [LibraryImport("libX11")]
     public static partial int XGetAtomNames(XDisplay* param0, Atom* param1, int param2, [NativeTypeName("char **")] sbyte** param3);

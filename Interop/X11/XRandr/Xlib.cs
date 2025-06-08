@@ -5,28 +5,55 @@ using System.Runtime.InteropServices;
 namespace TerraFX.Interop.Xlib;
 
 
-[StructLayout(LayoutKind.Sequential)]
-public unsafe struct XRRMonitorInfo
-{
-    public int name;             // Atom (not string)
-    public int primary;          // Bool
-    public int automatic;        // Bool
-    public short x;              // position
-    public short y;
-    public short width;          // dimensions
-    public short height;
-    public short mwidth;         // physical size (mm)
-    public short mheight;
-    public int noutput;
-    public nuint* outputs;       // RROutput* (array of outputs)
-}
-
-
-public static partial class Xlib
+public static unsafe partial class Xlib
 {
     [LibraryImport("libXrandr")]
-    public static unsafe partial MonitorInfo* XRRGetMonitors(XDisplay* display, XWindow window, [MarshalAs(UnmanagedType.Bool)] bool getActive, out int count);
+    public static partial int XRRQueryVersion(XDisplay* dpy, out int major_version_return, out int minor_version_return);
+
+
+    public static bool QueryXRandr(XDisplay* display, out int majorVersion, out int minorVersion)
+    {
+        try
+        {
+            XRRQueryVersion(display, out majorVersion, out minorVersion);
+            return true;
+        }
+        catch
+        {
+            majorVersion = 0;
+            minorVersion = 0;
+            return false;
+        }
+    }
+
 
     [LibraryImport("libXrandr")]
-    public static unsafe partial void XRRFreeMonitors(MonitorInfo* monitors);
+    public static partial XRRMonitorInfo* XRRGetMonitors(XDisplay* display, XWindow window, [MarshalAs(UnmanagedType.Bool)] bool getActive, out int count);
+
+    [LibraryImport("libXrandr")]
+    public static partial void XRRFreeMonitors(XRRMonitorInfo* monitors);
+
+    [LibraryImport("libXrandr")]
+    public static partial XRRScreenResources* XRRGetScreenResources(XDisplay* display, XWindow window);
+
+    [LibraryImport("libXrandr")]
+    public static partial void XRRFreeScreenResources(XRRScreenResources* resources);
+
+    [LibraryImport("libXrandr")]
+    public static partial XRROutputInfo* XRRGetOutputInfo(XDisplay* display, XRRScreenResources* resources, nint output);
+
+    [LibraryImport("libXrandr")]
+    public static partial void XRRFreeOutputInfo(XRROutputInfo* outputInfo);
+
+    [LibraryImport("libXrandr")]
+    public static partial XRRCrtcInfo* XRRGetCrtcInfo(XDisplay* display, XRRScreenResources* resources, nint crtc);
+
+    [LibraryImport("libXrandr")]
+    public static partial void XRRFreeCrtcInfo(XRRCrtcInfo* crtcInfo);
+
+
+    public const ushort RR_Rotate_0 = 1;
+    public const ushort RR_Rotate_90 = 2;
+    public const ushort RR_Rotate_180 = 4;
+    public const ushort RR_Rotate_270 = 8;
 }
