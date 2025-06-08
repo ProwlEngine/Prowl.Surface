@@ -90,7 +90,8 @@ internal sealed unsafe class Win32ScreenManager : ScreenManager
             updated = true;
         }
 
-        _items = [.. _itemBuilder];
+        if (updated)
+            _items = [.. _itemBuilder];
 
         return updated;
     }

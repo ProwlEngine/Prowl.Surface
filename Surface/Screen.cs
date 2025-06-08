@@ -69,15 +69,6 @@ public abstract class Screen : DispatcherObject
     public abstract string Name { get; }
 
     /// <summary>
-    /// Gets the associated native handle associated to this screen.
-    /// </summary>
-    /// <remarks>
-    /// - On Windows: this is a HMONITOR.
-    /// - On Linux: this is an X11 Screen
-    /// </remarks>
-    public IntPtr Handle { get; protected set; }
-
-    /// <summary>
     /// Gets the position of this screen.
     /// </summary>
     public abstract Point Position { get; }
