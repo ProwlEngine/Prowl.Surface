@@ -17,20 +17,20 @@ namespace Prowl.Surface.Platforms.Win32;
 [SupportedOSPlatform("windows10.0.14393.0")]
 internal sealed unsafe class Win32ScreenManager : ScreenManager
 {
-    private readonly Dictionary<HMONITOR, Win32Screen> _mapMonitorToScreen;
-    private readonly List<Win32Screen> _tempCollectScreens;
     private bool _screenAddedOrUpdated;
     private readonly GCHandle _thisGcHandle;
+
+    private List<Win32Screen> _itemBuilder;
     private Win32Screen[] _items;
+
     private Win32Screen? _primaryScreen;
     private Point _virtualScreenPosition;
     private Size _virtualScreenSize;
 
     public Win32ScreenManager()
     {
-        _mapMonitorToScreen = new Dictionary<HMONITOR, Win32Screen>();
         _thisGcHandle = GCHandle.Alloc(this);
-        _tempCollectScreens = new List<Win32Screen>(4);
+        _itemBuilder = new(4);
         _items = [];
 
         _ = TryUpdateScreens();
@@ -46,56 +46,37 @@ internal sealed unsafe class Win32ScreenManager : ScreenManager
 
     public bool TryGetScreen(HMONITOR monitorHandle, [NotNullWhen(true)] out Win32Screen? screen)
     {
-        return _mapMonitorToScreen.TryGetValue(monitorHandle, out screen);
+        screen = Array.Find(_items, x => x._monitorHandle == monitorHandle);
+        return screen != null;
     }
 
     public override bool TryUpdateScreens()
     {
-        // Clear the data before collecting information about screens
-        _tempCollectScreens.Clear();
-        _screenAddedOrUpdated = false;
+        bool updated = false;
 
+        _itemBuilder.Clear();
         _ = Windows.EnumDisplayMonitors(HDC.NULL, (RECT*)null, &EnumDisplayMonitorProc, GCHandle.ToIntPtr(_thisGcHandle));
-        var updated = _screenAddedOrUpdated;
 
-        var primaryScreen = _primaryScreen;
-
-        foreach (var screen in _tempCollectScreens)
+        Win32Screen? primary = null;
+        foreach (Win32Screen item in _itemBuilder)
         {
-            if (screen.IsPrimary)
-            {
-                if (primaryScreen != screen)
-                {
-                    primaryScreen = screen;
-                    updated = true;
-                }
-            }
+            if (item.IsPrimary)
+                primary = item;
 
-            _mapMonitorToScreen.Remove((HMONITOR)screen.Handle);
-        }
-
-        if (_tempCollectScreens.Count == 0)
-        {
-            if (primaryScreen is { })
-            {
-                primaryScreen = null;
+            // No matching item exists - value is either new or updated.
+            if (!Array.Exists(_items, x => x.Equals(item)))
                 updated = true;
-            }
-        }
-
-        if (_mapMonitorToScreen.Count > 0)
-        {
-            updated = true;
-        }
-
-        _mapMonitorToScreen.Clear();
-        foreach (var screen in _tempCollectScreens)
-        {
-            _mapMonitorToScreen[(HMONITOR)screen.Handle] = screen;
         }
 
         var virtualScreenPosition = new Point(Windows.GetSystemMetrics(SM.SM_XVIRTUALSCREEN), Windows.GetSystemMetrics(SM.SM_YVIRTUALSCREEN));
         var virtualScreenSize = new Size(Windows.GetSystemMetrics(SM.SM_CXVIRTUALSCREEN), Windows.GetSystemMetrics(SM.SM_CYVIRTUALSCREEN));
+
+        // Null state check then equality check
+        if ((_primaryScreen == null) != (primary == null) || (!_primaryScreen?.Equals(primary) ?? false))
+        {
+            _primaryScreen = primary;
+            updated = true;
+        }
 
         if (!_virtualScreenPosition.Equals(virtualScreenPosition))
         {
@@ -109,13 +90,7 @@ internal sealed unsafe class Win32ScreenManager : ScreenManager
             updated = true;
         }
 
-        _primaryScreen = primaryScreen;
-
-        if (updated)
-        {
-            // TODO: avoid the ToArray
-            _items = _tempCollectScreens.ToArray();
-        }
+        _items = [.. _itemBuilder];
 
         return updated;
     }
@@ -125,20 +100,8 @@ internal sealed unsafe class Win32ScreenManager : ScreenManager
     {
         var manager = (Win32ScreenManager)GCHandle.FromIntPtr((nint)lParam).Target!;
 
-        var newScreen = new Win32Screen(monitor);
-
-        if (!manager._mapMonitorToScreen.TryGetValue(monitor, out var screen))
-        {
-            screen = newScreen;
-            manager._screenAddedOrUpdated = true;
-        }
-        else if (!screen.Equals(newScreen))
-        {
-            screen = newScreen;
-            manager._screenAddedOrUpdated = true;
-        }
-
-        manager._tempCollectScreens.Add(screen);
+        Win32Screen screen = new(monitor);
+        manager._itemBuilder.Add(screen);
 
         return true;
     }

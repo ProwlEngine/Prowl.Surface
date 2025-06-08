@@ -16,9 +16,11 @@ namespace Prowl.Surface.Platforms.Win32;
 [SupportedOSPlatform("windows10.0.14393.0")]
 internal sealed class Win32Screen : Screen, IEquatable<Win32Screen>
 {
+    internal HMONITOR _monitorHandle;
+
     internal unsafe Win32Screen(HMONITOR monitor)
     {
-        Handle = monitor;
+        _monitorHandle = monitor;
 
         MONITORINFOEXW monitorInfo;
         monitorInfo.Base.cbSize = (uint)sizeof(MONITORINFOEXW);
