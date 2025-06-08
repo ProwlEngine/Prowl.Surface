@@ -1,42 +1,51 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>8500</NoWarn> <!-- Takes the address of a managed type -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
 
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <OutputType>Exe</OutputType>
-        <Nullable>enable</Nullable>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <NoWarn>8500</NoWarn> <!-- Takes the address of a managed type -->
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    </PropertyGroup>
+  <PropertyGroup>
+    <PackageId>Prowl.Surface</PackageId>
+    <Version>0.1.1</Version>
 
-    <PropertyGroup>
-        <PackageId>Prowl.Surface</PackageId>
-        <Version>0.1.1</Version>
+    <Authors>Alexandre Mutel, Prowl Group</Authors>
+    <Owners>Alexandre Mutel, Prowl Group</Owners>
+    <Copyright>Copyright (c) 2023 Alexandre Mutel; Copyright (2) 2025 Prowl Group.</Copyright>
 
-        <Authors>Alexandre Mutel, Prowl Group</Authors>
-        <Owners>Alexandre Mutel, Prowl Group</Owners>
-        <Copyright>Copyright (c) 2023 Alexandre Mutel; Copyright (2) 2025 Prowl Group.</Copyright>
+    <Description>Cross-platform windowing library.</Description>
+    <RepositoryUrl>https://github.com/xoofx/NWindows</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
 
-        <Description>Cross-platform windowing library.</Description>
-        <RepositoryUrl>https://github.com/xoofx/NWindows</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
+    <PackageTags>windows linux mac cross-platform windowing appkit wayland win32</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
 
-        <PackageTags>windows linux mac cross-platform windowing appkit wayland win32</PackageTags>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
 
-        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="TerraFX.Interop.Windows" Version="10.0.22621" />
+    <ProjectReference Include="../Interop/X11/TerraFX.Interop.Xlib.csproj"/>
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="TerraFX.Interop.Windows" Version="10.0.22621" />
-        <PackageReference Include="WaylandSharp" Version="0.2.1" />
-    </ItemGroup>
+  <PropertyGroup>
+    <WaylandBindingsProjectPath>../Interop/Wayland/WaylandProtocol.csproj</WaylandBindingsProjectPath>
+    <WaylandBindingsOutputPath>../Interop/Wayland/bin/$(Configuration)/net9.0/</WaylandBindingsOutputPath>
+    <WaylandBindingsDllName>WaylandProtocol.dll</WaylandBindingsDllName>
+  </PropertyGroup>
 
+  <Target Name="BuildWaylandBindingsProject" BeforeTargets="BeforeBuild">
+    <MSBuild Projects="$(WaylandBindingsProjectPath)" Targets="Build" Properties="Configuration=$(Configuration)" />
+  </Target>
 
-    <ItemGroup>
-      <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="WaylandProtocol" />
-      <AdditionalFiles Include="Platforms/Wayland/Protocols/wayland.xml" WaylandProtocol="client" />
-      <AdditionalFiles Include="Platforms/Wayland/Protocols/xdg-shell.xml" WaylandProtocol="client" />
-    </ItemGroup>
+  <ItemGroup>
+    <Reference Include="WaylandBindings">
+      <HintPath>$(WaylandBindingsOutputPath)$(WaylandBindingsDllName)</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
 </Project>
