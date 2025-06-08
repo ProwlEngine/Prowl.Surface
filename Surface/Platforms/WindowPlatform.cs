@@ -36,7 +36,7 @@ public static class WindowPlatform
         if (OperatingSystem.IsBrowser())
             return PlatformType.Browser;
 
-        if (OperatingSystem.IsLinux() && OperatingSystem.IsFreeBSD())
+        if (OperatingSystem.IsLinux() || OperatingSystem.IsFreeBSD())
         {
             string? sessionType = Environment.GetEnvironmentVariable("XDG_SESSION_TYPE");
 
