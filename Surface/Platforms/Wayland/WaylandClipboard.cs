@@ -4,10 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using WaylandSharp;
 using System.Runtime.Versioning;
 
-namespace Prowl.Surface.Platforms.Win32;
+namespace Prowl.Surface.Platforms.Wayland;
 
 
 [SupportedOSPlatform("linux")]

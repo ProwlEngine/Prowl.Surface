@@ -7,11 +7,7 @@ using System.Runtime.Versioning;
 
 using Prowl.Surface.Input;
 
-using TerraFX.Interop.Windows;
-
-using static TerraFX.Interop.Windows.Windows;
-
-namespace Prowl.Surface.Platforms.Win32;
+namespace Prowl.Surface.Platforms.Wayland;
 
 
 [SupportedOSPlatform("linux")]

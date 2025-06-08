@@ -6,8 +6,6 @@ using System.Runtime.Versioning;
 
 using Prowl.Surface.Input;
 
-using TerraFX.Interop.Windows;
-
 namespace Prowl.Surface.Platforms.Wayland;
 
 

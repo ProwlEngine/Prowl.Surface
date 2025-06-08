@@ -2,13 +2,6 @@
 // Licensed under the BSD-Clause 2 license.
 // See license.txt file in the project root for full license information.
 
-using Prowl.Surface.Input;
-
-using static TerraFX.Interop.Windows.Windows;
-using static TerraFX.Interop.Windows.VK;
-
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Versioning;
 
 namespace Prowl.Surface.Platforms.Wayland;

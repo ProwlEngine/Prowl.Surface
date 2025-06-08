@@ -3,17 +3,16 @@
 // See license.txt file in the project root for full license information.
 
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 
 using Prowl.Surface.Input;
+using Prowl.Surface.Platforms.Wayland;
 using Prowl.Surface.Platforms.Win32;
 using Prowl.Surface.Threading.Events;
 
@@ -36,7 +35,7 @@ public abstract partial class Dispatcher
     // We use a fast static instance for the current dispatcher
     // We check that we are on the same thread otherwise we override it
     [ThreadStatic]
-    internal static Dispatcher? TlsCurrentDispatcher; // TODO: we might want to optimize it with a static field as it is done in WPF
+    internal static Dispatcher? TlsCurrentDispatcher;
 
     // internal list storing all dispatchers
     private static readonly List<WeakReference<Dispatcher>> Dispatchers = new();
@@ -136,6 +135,10 @@ public abstract partial class Dispatcher
         if (OperatingSystem.IsWindows())
         {
             return new Win32Dispatcher(thread);
+        }
+        else if (OperatingSystem.IsLinux())
+        {
+            return new WaylandDispatcher(thread);
         }
 
         throw new PlatformNotSupportedException();
