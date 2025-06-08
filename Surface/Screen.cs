@@ -73,6 +73,7 @@ public abstract class Screen : DispatcherObject
     /// </summary>
     /// <remarks>
     /// - On Windows: this is a HMONITOR.
+    /// - On Linux: this is an X11 Screen
     /// </remarks>
     public IntPtr Handle { get; protected set; }
 
