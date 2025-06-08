@@ -9,7 +9,7 @@ public unsafe partial struct XErrorEvent
 {
     public int type;
 
-    public Display* display;
+    public XDisplay* display;
 
     public nuint resourceid;
 

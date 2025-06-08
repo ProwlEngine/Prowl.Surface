@@ -21,7 +21,7 @@ public unsafe partial struct XWindowAttributes
 
     public Visual* visual;
 
-    public Window root;
+    public XWindow root;
 
     public int c_class;
 
@@ -56,5 +56,5 @@ public unsafe partial struct XWindowAttributes
 
     public int override_redirect;
 
-    public Screen* screen;
+    public XScreen* screen;
 }

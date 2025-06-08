@@ -11,106 +11,106 @@ public static unsafe partial class Xlib
 {
     public static readonly nuint AllPlanes = unchecked((nuint)(~0));
 
-    public static int ConnectionNumber(Display* dpy) => dpy->fd;
+    public static int ConnectionNumber(XDisplay* dpy) => dpy->fd;
 
-    public static Window RootWindow(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root;
+    public static XWindow RootWindow(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root;
 
-    public static int DefaultScreen(Display* dpy) => dpy->default_screen;
+    public static int DefaultScreen(XDisplay* dpy) => dpy->default_screen;
 
-    public static Window DefaultRootWindow(Display* dpy) => ScreenOfDisplay(dpy, DefaultScreen(dpy))->root;
+    public static XWindow DefaultRootWindow(XDisplay* dpy) => ScreenOfDisplay(dpy, DefaultScreen(dpy))->root;
 
-    public static Visual* DefaultVisual(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root_visual;
-
-    [return: NativeTypeName("unsigned long")]
-    public static nuint BlackPixel(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->black_pixel;
+    public static Visual* DefaultVisual(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root_visual;
 
     [return: NativeTypeName("unsigned long")]
-    public static nuint WhitePixel(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->white_pixel;
+    public static nuint BlackPixel(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->black_pixel;
 
-    public static int QLength(Display* dpy) => dpy->qlen;
+    [return: NativeTypeName("unsigned long")]
+    public static nuint WhitePixel(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->white_pixel;
 
-    public static int DisplayWidth(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->width;
+    public static int QLength(XDisplay* dpy) => dpy->qlen;
 
-    public static int DisplayHeight(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->height;
+    public static int DisplayWidth(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->width;
 
-    public static int DisplayWidthMM(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->mwidth;
+    public static int DisplayHeight(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->height;
 
-    public static int DisplayHeightMM(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->mheight;
+    public static int DisplayWidthMM(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->mwidth;
 
-    public static int DisplayPlanes(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root_depth;
+    public static int DisplayHeightMM(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->mheight;
 
-    public static int DisplayCells(Display* dpy, int scr) => DefaultVisual(dpy, scr)->map_entries;
+    public static int DisplayPlanes(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root_depth;
 
-    public static int ScreenCount(Display* dpy) => dpy->nscreens;
+    public static int DisplayCells(XDisplay* dpy, int scr) => DefaultVisual(dpy, scr)->map_entries;
+
+    public static int ScreenCount(XDisplay* dpy) => dpy->nscreens;
 
     [return: NativeTypeName("char *")]
-    public static sbyte* ServerVendor(Display* dpy) => dpy->vendor;
+    public static sbyte* ServerVendor(XDisplay* dpy) => dpy->vendor;
 
-    public static int ProtocolVersion(Display* dpy) => dpy->proto_major_version;
+    public static int ProtocolVersion(XDisplay* dpy) => dpy->proto_major_version;
 
-    public static int ProtocolRevision(Display* dpy) => dpy->proto_minor_version;
+    public static int ProtocolRevision(XDisplay* dpy) => dpy->proto_minor_version;
 
-    public static int VendorRelease(Display* dpy) => dpy->release;
+    public static int VendorRelease(XDisplay* dpy) => dpy->release;
 
     [return: NativeTypeName("char *")]
-    public static sbyte* DisplayString(Display* dpy) => dpy->display_name;
+    public static sbyte* DisplayString(XDisplay* dpy) => dpy->display_name;
 
-    public static int DefaultDepth(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root_depth;
+    public static int DefaultDepth(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root_depth;
 
-    public static Colormap DefaultColormap(Display* dpy, int scr) => ScreenOfDisplay(dpy, scr)->cmap;
+    public static Colormap DefaultColormap(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->cmap;
 
-    public static int BitmapUnit(Display* dpy) => dpy->bitmap_unit;
+    public static int BitmapUnit(XDisplay* dpy) => dpy->bitmap_unit;
 
-    public static int BitmapBitOrder(Display* dpy) => dpy->bitmap_bit_order;
+    public static int BitmapBitOrder(XDisplay* dpy) => dpy->bitmap_bit_order;
 
-    public static int BitmapPad(Display* dpy) => dpy->bitmap_pad;
+    public static int BitmapPad(XDisplay* dpy) => dpy->bitmap_pad;
 
-    public static int ImageByteOrder(Display* dpy) => dpy->byte_order;
-
-    [return: NativeTypeName("unsigned long")]
-    public static nuint NextRequest(Display* dpy) => dpy->request + 1;
+    public static int ImageByteOrder(XDisplay* dpy) => dpy->byte_order;
 
     [return: NativeTypeName("unsigned long")]
-    public static nuint LastKnownRequestProcessed(Display* dpy) => dpy->last_request_read;
+    public static nuint NextRequest(XDisplay* dpy) => dpy->request + 1;
 
-    public static Screen* ScreenOfDisplay(Display* dpy, int scr) => &dpy->screens[scr];
+    [return: NativeTypeName("unsigned long")]
+    public static nuint LastKnownRequestProcessed(XDisplay* dpy) => dpy->last_request_read;
 
-    public static Screen* DefaultScreenOfDisplay(Display* dpy) => ScreenOfDisplay(dpy, DefaultScreen(dpy));
+    public static XScreen* ScreenOfDisplay(XDisplay* dpy, int scr) => &dpy->screens[scr];
 
-    public static Display* DisplayOfScreen(Screen* s) => s->display;
+    public static XScreen* DefaultScreenOfDisplay(XDisplay* dpy) => ScreenOfDisplay(dpy, DefaultScreen(dpy));
 
-    public static Window RootWindowOfScreen(Screen* s) => s->root;
+    public static XDisplay* DisplayOfScreen(XScreen* s) => s->display;
 
-    public static nuint BlackPixelOfScreen(Screen* s) => s->black_pixel;
+    public static XWindow RootWindowOfScreen(XScreen* s) => s->root;
 
-    public static nuint WhitePixelOfScreen(Screen* s) => s->white_pixel;
+    public static nuint BlackPixelOfScreen(XScreen* s) => s->black_pixel;
 
-    public static Colormap DefaultColormapOfScreen(Screen* s) => s->cmap;
+    public static nuint WhitePixelOfScreen(XScreen* s) => s->white_pixel;
 
-    public static int DefaultDepthOfScreen(Screen* s) => s->root_depth;
+    public static Colormap DefaultColormapOfScreen(XScreen* s) => s->cmap;
 
-    public static Visual* DefaultVisualOfScreen(Screen* s) => s->root_visual;
+    public static int DefaultDepthOfScreen(XScreen* s) => s->root_depth;
 
-    public static int WidthOfScreen(Screen* s) => s->width;
+    public static Visual* DefaultVisualOfScreen(XScreen* s) => s->root_visual;
 
-    public static int HeightOfScreen(Screen* s) => s->height;
+    public static int WidthOfScreen(XScreen* s) => s->width;
 
-    public static int WidthMMOfScreen(Screen* s) => s->mwidth;
+    public static int HeightOfScreen(XScreen* s) => s->height;
 
-    public static int HeightMMOfScreen(Screen* s) => s->mheight;
+    public static int WidthMMOfScreen(XScreen* s) => s->mwidth;
 
-    public static int PlanesOfScreen(Screen* s) => s->root_depth;
+    public static int HeightMMOfScreen(XScreen* s) => s->mheight;
 
-    public static int CellsOfScreen(Screen* s) => DefaultVisualOfScreen(s)->map_entries;
+    public static int PlanesOfScreen(XScreen* s) => s->root_depth;
 
-    public static int MinCmapsOfScreen(Screen* s) => s->min_maps;
+    public static int CellsOfScreen(XScreen* s) => DefaultVisualOfScreen(s)->map_entries;
 
-    public static int MaxCmapsOfScreen(Screen* s) => s->max_maps;
+    public static int MinCmapsOfScreen(XScreen* s) => s->min_maps;
 
-    public static int DoesSaveUnders(Screen* s) => s->save_unders;
+    public static int MaxCmapsOfScreen(XScreen* s) => s->max_maps;
 
-    public static int DoesBackingStore(Screen* s) => s->backing_store;
+    public static int DoesSaveUnders(XScreen* s) => s->save_unders;
+
+    public static int DoesBackingStore(XScreen* s) => s->backing_store;
 
     [return: NativeTypeName("long")]
-    public static IntPtr EventMaskOfScreen(Screen* s) => s->root_input_mask;
+    public static IntPtr EventMaskOfScreen(XScreen* s) => s->root_input_mask;
 }

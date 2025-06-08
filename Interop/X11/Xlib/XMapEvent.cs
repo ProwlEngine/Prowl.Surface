@@ -14,11 +14,11 @@ public unsafe partial struct XMapEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
-    public Window @event;
+    public XWindow @event;
 
-    public Window window;
+    public XWindow window;
 
     public int override_redirect;
 }

@@ -14,9 +14,9 @@ public unsafe partial struct XDestroyWindowEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
-    public Window @event;
+    public XWindow @event;
 
-    public Window window;
+    public XWindow window;
 }

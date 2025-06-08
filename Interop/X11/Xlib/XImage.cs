@@ -50,7 +50,7 @@ public unsafe partial struct XImage
     public unsafe partial struct funcs
     {
         [NativeTypeName("struct _XImage *(*)(struct _XDisplay *, Visual *, unsigned int, int, int, char *, unsigned int, unsigned int, int, int)")]
-        public delegate* unmanaged<Display*, Visual*, uint, int, int, sbyte*, uint, uint, int, int, XImage*> create_image;
+        public delegate* unmanaged<XDisplay*, Visual*, uint, int, int, sbyte*, uint, uint, int, int, XImage*> create_image;
 
         [NativeTypeName("int (*)(struct _XImage *)")]
         public delegate* unmanaged<XImage*, int> destroy_image;

@@ -14,7 +14,7 @@ public unsafe partial struct XNoExposeEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
     public Drawable drawable;
 

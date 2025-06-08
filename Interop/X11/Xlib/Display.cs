@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 namespace TerraFX.Interop.Xlib;
 
 [StructLayout(LayoutKind.Sequential)]
-public unsafe partial struct Display
+public unsafe partial struct XDisplay
 {
     public XExtData* ext_data;
 
@@ -36,7 +36,7 @@ public unsafe partial struct Display
     public int private6;
 
     [NativeTypeName("XID (*)(struct _XDisplay *)")]
-    public delegate* unmanaged<Display*, nuint> resource_alloc;
+    public delegate* unmanaged<XDisplay*, nuint> resource_alloc;
 
     public int byte_order;
 
@@ -87,7 +87,7 @@ public unsafe partial struct Display
     public XrmHashBucket db;
 
     [NativeTypeName("int (*)(struct _XDisplay *)")]
-    public delegate* unmanaged<Display*, int> private15;
+    public delegate* unmanaged<XDisplay*, int> private15;
 
     [NativeTypeName("char *")]
     public sbyte* display_name;
@@ -96,7 +96,7 @@ public unsafe partial struct Display
 
     public int nscreens;
 
-    public Screen* screens;
+    public XScreen* screens;
 
     [NativeTypeName("unsigned long")]
     public nuint motion_buffer;

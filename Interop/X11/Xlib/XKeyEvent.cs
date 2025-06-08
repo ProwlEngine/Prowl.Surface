@@ -14,13 +14,13 @@ public unsafe partial struct XKeyEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
-    public Window window;
+    public XWindow window;
 
-    public Window root;
+    public XWindow root;
 
-    public Window subwindow;
+    public XWindow subwindow;
 
     public Time time;
 

@@ -14,9 +14,9 @@ public unsafe partial struct XSelectionEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
-    public Window requestor;
+    public XWindow requestor;
 
     public Atom selection;
 

@@ -14,9 +14,9 @@ public unsafe partial struct XKeymapEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
-    public Window window;
+    public XWindow window;
 
     [NativeTypeName("char[32]")]
     public fixed sbyte key_vector[32];

@@ -14,9 +14,9 @@ public unsafe partial struct XMapRequestEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
-    public Window parent;
+    public XWindow parent;
 
-    public Window window;
+    public XWindow window;
 }

@@ -5,14 +5,14 @@
 
 namespace TerraFX.Interop.Xlib;
 
-public unsafe partial struct Screen
+public unsafe struct XScreen
 {
     public XExtData* ext_data;
 
     [NativeTypeName("struct _XDisplay *")]
-    public Display* display;
+    public XDisplay* display;
 
-    public Window root;
+    public XWindow root;
 
     public int width;
 

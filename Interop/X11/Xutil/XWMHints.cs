@@ -16,7 +16,7 @@ public partial struct XWMHints
 
     public Pixmap icon_pixmap;
 
-    public Window icon_window;
+    public XWindow icon_window;
 
     public int icon_x;
 

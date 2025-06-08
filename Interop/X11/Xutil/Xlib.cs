@@ -44,49 +44,49 @@ public static unsafe partial class Xlib
     public static partial int XEqualRegion(Region param0, Region param1);
 
     [LibraryImport("libX11")]
-    public static partial int XGetClassHint(Display* param0, Window param1, XClassHint* param2);
+    public static partial int XGetClassHint(XDisplay* param0, XWindow param1, XClassHint* param2);
 
     [LibraryImport("libX11")]
-    public static partial int XGetIconSizes(Display* param0, Window param1, XIconSize** param2, int* param3);
+    public static partial int XGetIconSizes(XDisplay* param0, XWindow param1, XIconSize** param2, int* param3);
 
     [LibraryImport("libX11")]
-    public static partial int XGetNormalHints(Display* param0, Window param1, XSizeHints* param2);
+    public static partial int XGetNormalHints(XDisplay* param0, XWindow param1, XSizeHints* param2);
 
     [LibraryImport("libX11")]
-    public static partial int XGetRGBColormaps(Display* param0, Window param1, XStandardColormap** param2, int* param3, Atom param4);
+    public static partial int XGetRGBColormaps(XDisplay* param0, XWindow param1, XStandardColormap** param2, int* param3, Atom param4);
 
     [LibraryImport("libX11")]
-    public static partial int XGetSizeHints(Display* param0, Window param1, XSizeHints* param2, Atom param3);
+    public static partial int XGetSizeHints(XDisplay* param0, XWindow param1, XSizeHints* param2, Atom param3);
 
     [LibraryImport("libX11")]
-    public static partial int XGetStandardColormap(Display* param0, Window param1, XStandardColormap* param2, Atom param3);
+    public static partial int XGetStandardColormap(XDisplay* param0, XWindow param1, XStandardColormap* param2, Atom param3);
 
     [LibraryImport("libX11")]
-    public static partial int XGetTextProperty(Display* param0, Window param1, XTextProperty* param2, Atom param3);
+    public static partial int XGetTextProperty(XDisplay* param0, XWindow param1, XTextProperty* param2, Atom param3);
 
     [LibraryImport("libX11")]
-    public static partial XVisualInfo* XGetVisualInfo(Display* param0, [NativeTypeName("long")] nint param1, XVisualInfo* param2, int* param3);
+    public static partial XVisualInfo* XGetVisualInfo(XDisplay* param0, [NativeTypeName("long")] nint param1, XVisualInfo* param2, int* param3);
 
     [LibraryImport("libX11")]
-    public static partial int XGetWMClientMachine(Display* param0, Window param1, XTextProperty* param2);
+    public static partial int XGetWMClientMachine(XDisplay* param0, XWindow param1, XTextProperty* param2);
 
     [LibraryImport("libX11")]
-    public static partial XWMHints* XGetWMHints(Display* param0, Window param1);
+    public static partial XWMHints* XGetWMHints(XDisplay* param0, XWindow param1);
 
     [LibraryImport("libX11")]
-    public static partial int XGetWMIconName(Display* param0, Window param1, XTextProperty* param2);
+    public static partial int XGetWMIconName(XDisplay* param0, XWindow param1, XTextProperty* param2);
 
     [LibraryImport("libX11")]
-    public static partial int XGetWMName(Display* param0, Window param1, XTextProperty* param2);
+    public static partial int XGetWMName(XDisplay* param0, XWindow param1, XTextProperty* param2);
 
     [LibraryImport("libX11")]
-    public static partial int XGetWMNormalHints(Display* param0, Window param1, XSizeHints* param2, [NativeTypeName("long *")] nint* param3);
+    public static partial int XGetWMNormalHints(XDisplay* param0, XWindow param1, XSizeHints* param2, [NativeTypeName("long *")] nint* param3);
 
     [LibraryImport("libX11")]
-    public static partial int XGetWMSizeHints(Display* param0, Window param1, XSizeHints* param2, [NativeTypeName("long *")] nint* param3, Atom param4);
+    public static partial int XGetWMSizeHints(XDisplay* param0, XWindow param1, XSizeHints* param2, [NativeTypeName("long *")] nint* param3, Atom param4);
 
     [LibraryImport("libX11")]
-    public static partial int XGetZoomHints(Display* param0, Window param1, XSizeHints* param2);
+    public static partial int XGetZoomHints(XDisplay* param0, XWindow param1, XSizeHints* param2);
 
     [LibraryImport("libX11")]
     public static partial int XIntersectRegion(Region param0, Region param1, Region param2);
@@ -98,7 +98,7 @@ public static unsafe partial class Xlib
     public static partial int XLookupString(XKeyEvent* param0, [NativeTypeName("char *")] sbyte* param1, int param2, KeySym* param3, XComposeStatus* param4);
 
     [LibraryImport("libX11")]
-    public static partial int XMatchVisualInfo(Display* param0, int param1, int param2, int param3, XVisualInfo* param4);
+    public static partial int XMatchVisualInfo(XDisplay* param0, int param1, int param2, int param3, XVisualInfo* param4);
 
     [LibraryImport("libX11")]
     public static partial int XOffsetRegion(Region param0, int param1, int param2);
@@ -113,58 +113,58 @@ public static unsafe partial class Xlib
     public static partial int XRectInRegion(Region param0, int param1, int param2, [NativeTypeName("unsigned int")] uint param3, [NativeTypeName("unsigned int")] uint param4);
 
     [LibraryImport("libX11")]
-    public static partial int XSetClassHint(Display* param0, Window param1, XClassHint* param2);
+    public static partial int XSetClassHint(XDisplay* param0, XWindow param1, XClassHint* param2);
 
     [LibraryImport("libX11")]
-    public static partial int XSetIconSizes(Display* param0, Window param1, XIconSize* param2, int param3);
+    public static partial int XSetIconSizes(XDisplay* param0, XWindow param1, XIconSize* param2, int param3);
 
     [LibraryImport("libX11")]
-    public static partial int XSetNormalHints(Display* param0, Window param1, XSizeHints* param2);
+    public static partial int XSetNormalHints(XDisplay* param0, XWindow param1, XSizeHints* param2);
 
     [LibraryImport("libX11")]
-    public static partial void XSetRGBColormaps(Display* param0, Window param1, XStandardColormap* param2, int param3, Atom param4);
+    public static partial void XSetRGBColormaps(XDisplay* param0, XWindow param1, XStandardColormap* param2, int param3, Atom param4);
 
     [LibraryImport("libX11")]
-    public static partial int XSetSizeHints(Display* param0, Window param1, XSizeHints* param2, Atom param3);
+    public static partial int XSetSizeHints(XDisplay* param0, XWindow param1, XSizeHints* param2, Atom param3);
 
     [LibraryImport("libX11")]
-    public static partial int XSetStandardProperties(Display* param0, Window param1, [NativeTypeName("const char *")] sbyte* param2, [NativeTypeName("const char *")] sbyte* param3, Pixmap param4, [NativeTypeName("char **")] sbyte** param5, int param6, XSizeHints* param7);
+    public static partial int XSetStandardProperties(XDisplay* param0, XWindow param1, [NativeTypeName("const char *")] sbyte* param2, [NativeTypeName("const char *")] sbyte* param3, Pixmap param4, [NativeTypeName("char **")] sbyte** param5, int param6, XSizeHints* param7);
 
     [LibraryImport("libX11")]
-    public static partial void XSetTextProperty(Display* param0, Window param1, XTextProperty* param2, Atom param3);
+    public static partial void XSetTextProperty(XDisplay* param0, XWindow param1, XTextProperty* param2, Atom param3);
 
     [LibraryImport("libX11")]
-    public static partial void XSetWMClientMachine(Display* param0, Window param1, XTextProperty* param2);
+    public static partial void XSetWMClientMachine(XDisplay* param0, XWindow param1, XTextProperty* param2);
 
     [LibraryImport("libX11")]
-    public static partial int XSetWMHints(Display* param0, Window param1, XWMHints* param2);
+    public static partial int XSetWMHints(XDisplay* param0, XWindow param1, XWMHints* param2);
 
     [LibraryImport("libX11")]
-    public static partial void XSetWMIconName(Display* param0, Window param1, XTextProperty* param2);
+    public static partial void XSetWMIconName(XDisplay* param0, XWindow param1, XTextProperty* param2);
 
     [LibraryImport("libX11")]
-    public static partial void XSetWMName(Display* param0, Window param1, XTextProperty* param2);
+    public static partial void XSetWMName(XDisplay* param0, XWindow param1, XTextProperty* param2);
 
     [LibraryImport("libX11")]
-    public static partial void XSetWMNormalHints(Display* param0, Window param1, XSizeHints* param2);
+    public static partial void XSetWMNormalHints(XDisplay* param0, XWindow param1, XSizeHints* param2);
 
     [LibraryImport("libX11")]
-    public static partial void XSetWMProperties(Display* param0, Window param1, XTextProperty* param2, XTextProperty* param3, [NativeTypeName("char **")] sbyte** param4, int param5, XSizeHints* param6, XWMHints* param7, XClassHint* param8);
+    public static partial void XSetWMProperties(XDisplay* param0, XWindow param1, XTextProperty* param2, XTextProperty* param3, [NativeTypeName("char **")] sbyte** param4, int param5, XSizeHints* param6, XWMHints* param7, XClassHint* param8);
 
     [LibraryImport("libX11")]
-    public static partial void XmbSetWMProperties(Display* param0, Window param1, [NativeTypeName("const char *")] sbyte* param2, [NativeTypeName("const char *")] sbyte* param3, [NativeTypeName("char **")] sbyte** param4, int param5, XSizeHints* param6, XWMHints* param7, XClassHint* param8);
+    public static partial void XmbSetWMProperties(XDisplay* param0, XWindow param1, [NativeTypeName("const char *")] sbyte* param2, [NativeTypeName("const char *")] sbyte* param3, [NativeTypeName("char **")] sbyte** param4, int param5, XSizeHints* param6, XWMHints* param7, XClassHint* param8);
 
     [LibraryImport("libX11")]
-    public static partial void Xutf8SetWMProperties(Display* param0, Window param1, [NativeTypeName("const char *")] sbyte* param2, [NativeTypeName("const char *")] sbyte* param3, [NativeTypeName("char **")] sbyte** param4, int param5, XSizeHints* param6, XWMHints* param7, XClassHint* param8);
+    public static partial void Xutf8SetWMProperties(XDisplay* param0, XWindow param1, [NativeTypeName("const char *")] sbyte* param2, [NativeTypeName("const char *")] sbyte* param3, [NativeTypeName("char **")] sbyte** param4, int param5, XSizeHints* param6, XWMHints* param7, XClassHint* param8);
 
     [LibraryImport("libX11")]
-    public static partial void XSetWMSizeHints(Display* param0, Window param1, XSizeHints* param2, Atom param3);
+    public static partial void XSetWMSizeHints(XDisplay* param0, XWindow param1, XSizeHints* param2, Atom param3);
 
     [LibraryImport("libX11")]
-    public static partial void XSetStandardColormap(Display* param0, Window param1, XStandardColormap* param2, Atom param3);
+    public static partial void XSetStandardColormap(XDisplay* param0, XWindow param1, XStandardColormap* param2, Atom param3);
 
     [LibraryImport("libX11")]
-    public static partial int XSetZoomHints(Display* param0, Window param1, XSizeHints* param2);
+    public static partial int XSetZoomHints(XDisplay* param0, XWindow param1, XSizeHints* param2);
 
     [LibraryImport("libX11")]
     public static partial int XShrinkRegion(Region param0, int param1, int param2);
@@ -176,13 +176,13 @@ public static unsafe partial class Xlib
     public static partial int XSubtractRegion(Region param0, Region param1, Region param2);
 
     [LibraryImport("libX11")]
-    public static partial int XmbTextListToTextProperty(Display* display, [NativeTypeName("char **")] sbyte** list, int count, XICCEncodingStyle style, XTextProperty* text_prop_return);
+    public static partial int XmbTextListToTextProperty(XDisplay* display, [NativeTypeName("char **")] sbyte** list, int count, XICCEncodingStyle style, XTextProperty* text_prop_return);
 
     [LibraryImport("libX11")]
-    public static partial int XwcTextListToTextProperty(Display* display, [NativeTypeName("wchar_t **")] uint** list, int count, XICCEncodingStyle style, XTextProperty* text_prop_return);
+    public static partial int XwcTextListToTextProperty(XDisplay* display, [NativeTypeName("wchar_t **")] uint** list, int count, XICCEncodingStyle style, XTextProperty* text_prop_return);
 
     [LibraryImport("libX11")]
-    public static partial int Xutf8TextListToTextProperty(Display* display, [NativeTypeName("char **")] sbyte** list, int count, XICCEncodingStyle style, XTextProperty* text_prop_return);
+    public static partial int Xutf8TextListToTextProperty(XDisplay* display, [NativeTypeName("char **")] sbyte** list, int count, XICCEncodingStyle style, XTextProperty* text_prop_return);
 
     [LibraryImport("libX11")]
     public static partial void XwcFreeStringList([NativeTypeName("wchar_t **")] uint** list);
@@ -191,13 +191,13 @@ public static unsafe partial class Xlib
     public static partial int XTextPropertyToStringList(XTextProperty* param0, [NativeTypeName("char ***")] sbyte*** param1, int* param2);
 
     [LibraryImport("libX11")]
-    public static partial int XmbTextPropertyToTextList(Display* display, [NativeTypeName("const XTextProperty *")] XTextProperty* text_prop, [NativeTypeName("char ***")] sbyte*** list_return, int* count_return);
+    public static partial int XmbTextPropertyToTextList(XDisplay* display, [NativeTypeName("const XTextProperty *")] XTextProperty* text_prop, [NativeTypeName("char ***")] sbyte*** list_return, int* count_return);
 
     [LibraryImport("libX11")]
-    public static partial int XwcTextPropertyToTextList(Display* display, [NativeTypeName("const XTextProperty *")] XTextProperty* text_prop, [NativeTypeName("wchar_t ***")] uint*** list_return, int* count_return);
+    public static partial int XwcTextPropertyToTextList(XDisplay* display, [NativeTypeName("const XTextProperty *")] XTextProperty* text_prop, [NativeTypeName("wchar_t ***")] uint*** list_return, int* count_return);
 
     [LibraryImport("libX11")]
-    public static partial int Xutf8TextPropertyToTextList(Display* display, [NativeTypeName("const XTextProperty *")] XTextProperty* text_prop, [NativeTypeName("char ***")] sbyte*** list_return, int* count_return);
+    public static partial int Xutf8TextPropertyToTextList(XDisplay* display, [NativeTypeName("const XTextProperty *")] XTextProperty* text_prop, [NativeTypeName("char ***")] sbyte*** list_return, int* count_return);
 
     [LibraryImport("libX11")]
     public static partial int XUnionRectWithRegion(XRectangle* param0, Region param1, Region param2);
@@ -206,7 +206,7 @@ public static unsafe partial class Xlib
     public static partial int XUnionRegion(Region param0, Region param1, Region param2);
 
     [LibraryImport("libX11")]
-    public static partial int XWMGeometry(Display* param0, int param1, [NativeTypeName("const char *")] sbyte* param2, [NativeTypeName("const char *")] sbyte* param3, [NativeTypeName("unsigned int")] uint param4, XSizeHints* param5, int* param6, int* param7, int* param8, int* param9, int* param10);
+    public static partial int XWMGeometry(XDisplay* param0, int param1, [NativeTypeName("const char *")] sbyte* param2, [NativeTypeName("const char *")] sbyte* param3, [NativeTypeName("unsigned int")] uint param4, XSizeHints* param5, int* param6, int* param7, int* param8, int* param9, int* param10);
 
     [LibraryImport("libX11")]
     public static partial int XXorRegion(Region param0, Region param1, Region param2);

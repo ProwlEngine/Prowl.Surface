@@ -14,7 +14,7 @@ public unsafe partial struct XGraphicsExposeEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
     public Drawable drawable;
 

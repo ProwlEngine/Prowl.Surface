@@ -19,9 +19,9 @@ public unsafe partial struct XClientMessageEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
-    public Window window;
+    public XWindow window;
 
     public Atom message_type;
 

@@ -14,7 +14,7 @@ public unsafe partial struct XGenericEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
     public int extension;
 

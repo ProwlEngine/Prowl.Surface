@@ -17,7 +17,7 @@ public partial struct XWindowChanges
 
     public int border_width;
 
-    public Window sibling;
+    public XWindow sibling;
 
     public int stack_mode;
 }

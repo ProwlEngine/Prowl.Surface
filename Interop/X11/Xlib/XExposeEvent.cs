@@ -14,9 +14,9 @@ public unsafe partial struct XExposeEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
-    public Window window;
+    public XWindow window;
 
     public int x;
 

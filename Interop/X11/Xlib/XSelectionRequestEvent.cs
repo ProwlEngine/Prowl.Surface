@@ -14,11 +14,11 @@ public unsafe partial struct XSelectionRequestEvent
 
     public int send_event;
 
-    public Display* display;
+    public XDisplay* display;
 
-    public Window owner;
+    public XWindow owner;
 
-    public Window requestor;
+    public XWindow requestor;
 
     public Atom selection;
 
