@@ -18,11 +18,11 @@ namespace Prowl.Surface.Platforms.Win32;
 internal sealed unsafe class Win32ScreenManager : ScreenManager
 {
     private readonly Dictionary<HMONITOR, Win32Screen> _mapMonitorToScreen;
-    private readonly List<Screen> _tempCollectScreens;
+    private readonly List<Win32Screen> _tempCollectScreens;
     private bool _screenAddedOrUpdated;
     private readonly GCHandle _thisGcHandle;
-    private Screen[] _items;
-    private Screen? _primaryScreen;
+    private Win32Screen[] _items;
+    private Win32Screen? _primaryScreen;
     private Point _virtualScreenPosition;
     private Size _virtualScreenSize;
 
@@ -30,21 +30,15 @@ internal sealed unsafe class Win32ScreenManager : ScreenManager
     {
         _mapMonitorToScreen = new Dictionary<HMONITOR, Win32Screen>();
         _thisGcHandle = GCHandle.Alloc(this);
-        _tempCollectScreens = new List<Screen>(4);
-        _items = Array.Empty<Screen>();
+        _tempCollectScreens = new List<Win32Screen>(4);
+        _items = [];
 
         _ = TryUpdateScreens();
     }
 
-    public override ReadOnlySpan<Screen> GetAllScreens()
-    {
-        return _items;
-    }
+    public override ReadOnlySpan<Screen> GetAllScreens() => _items;
 
-    public override Screen? GetPrimaryScreen()
-    {
-        return _primaryScreen;
-    }
+    public override Screen? GetPrimaryScreen() => _primaryScreen;
 
     public override Point GetVirtualScreenPosition() => _virtualScreenPosition;
 
@@ -97,7 +91,7 @@ internal sealed unsafe class Win32ScreenManager : ScreenManager
         _mapMonitorToScreen.Clear();
         foreach (var screen in _tempCollectScreens)
         {
-            _mapMonitorToScreen[(HMONITOR)screen.Handle] = (Win32Screen)screen;
+            _mapMonitorToScreen[(HMONITOR)screen.Handle] = screen;
         }
 
         var virtualScreenPosition = new Point(Windows.GetSystemMetrics(SM.SM_XVIRTUALSCREEN), Windows.GetSystemMetrics(SM.SM_YVIRTUALSCREEN));
@@ -131,18 +125,19 @@ internal sealed unsafe class Win32ScreenManager : ScreenManager
     {
         var manager = (Win32ScreenManager)GCHandle.FromIntPtr((nint)lParam).Target!;
 
-        Win32ScreenData.TryGetScreenState(monitor, out var screenData);
+        var newScreen = new Win32Screen(monitor);
 
         if (!manager._mapMonitorToScreen.TryGetValue(monitor, out var screen))
         {
-            screen = new Win32Screen(monitor, screenData);
+            screen = newScreen;
             manager._screenAddedOrUpdated = true;
         }
-        else if (screenData != screen.InternalData)
+        else if (!screen.Equals(newScreen))
         {
-            screen.InternalData = screenData;
+            screen = newScreen;
             manager._screenAddedOrUpdated = true;
         }
+
         manager._tempCollectScreens.Add(screen);
 
         return true;

@@ -2,103 +2,120 @@
 // Licensed under the BSD-Clause 2 license.
 // See license.txt file in the project root for full license information.
 
+using System;
 using System.Drawing;
 using System.Runtime.Versioning;
 
 using TerraFX.Interop.Windows;
 
+using static TerraFX.Interop.Windows.Windows;
+
 namespace Prowl.Surface.Platforms.Win32;
 
 
 [SupportedOSPlatform("windows10.0.14393.0")]
-internal sealed class Win32Screen : Screen
+internal sealed class Win32Screen : Screen, IEquatable<Win32Screen>
 {
-    internal Win32ScreenData InternalData;
-
-    public Win32Screen(HMONITOR monitor, in Win32ScreenData data)
+    internal unsafe Win32Screen(HMONITOR monitor)
     {
         Handle = monitor;
-        InternalData = data;
-    }
 
-    public override bool IsValid
-    {
-        get
+        MONITORINFOEXW monitorInfo;
+        monitorInfo.Base.cbSize = (uint)sizeof(MONITORINFOEXW);
+
+        _name = "";
+        if (GetMonitorInfoW(monitor, (MONITORINFO*)&monitorInfo))
         {
-            VerifyAccess();
-            return InternalData.IsValid;
+            _isPrimary = (monitorInfo.Base.dwFlags & MONITORINFOF_PRIMARY) != 0;
+
+            // Fetch the DPI
+            int dpiX;
+            int dpiY;
+            if (GetDpiForMonitor(monitor, MONITOR_DPI_TYPE.MDT_EFFECTIVE_DPI, (uint*)&dpiX, (uint*)&dpiY) != 0)
+            {
+                dpiX = 96;
+                dpiY = 96;
+            }
+
+            _dpi = new Dpi(dpiX, dpiY);
+
+            var span = new ReadOnlySpan<char>((char*)monitorInfo.szDevice, 32);
+            int index = span.IndexOf((char)0);
+            if (index >= 0)
+            {
+                span = span.Slice(0, index);
+            }
+
+            _name = new string(span);
+            _position.X = monitorInfo.Base.rcMonitor.left;
+            _position.Y = monitorInfo.Base.rcMonitor.top;
+
+            _sizeInPixels.Width = monitorInfo.Base.rcMonitor.right - monitorInfo.Base.rcMonitor.left;
+            _sizeInPixels.Height = monitorInfo.Base.rcMonitor.bottom - monitorInfo.Base.rcMonitor.top;
+            _size.Width = _dpi.ScalePixelToLogical.X * _sizeInPixels.Width;
+            _size.Height = _dpi.ScalePixelToLogical.Y * _sizeInPixels.Height;
+
+            // Query all supported display mode
+            DEVMODEW devModeW = default;
+            devModeW.dmSize = (ushort)sizeof(DEVMODEW);
+
+            // Query the current display mode
+            _refreshRate = 0;
+            _displayOrientation = DisplayOrientation.Default;
+
+            if (EnumDisplaySettingsExW((ushort*)monitorInfo.szDevice, ENUM.ENUM_CURRENT_SETTINGS, &devModeW, 0))
+            {
+                _refreshRate = (int)devModeW.dmDisplayFrequency;
+                _displayOrientation = devModeW.dmOrientation switch
+                {
+                    DMDO_DEFAULT => DisplayOrientation.Default,
+                    DMDO_90 => DisplayOrientation.Rotate90,
+                    DMDO_180 => DisplayOrientation.Rotate180,
+                    DMDO_270 => DisplayOrientation.Rotate270,
+                    _ => DisplayOrientation.Default,
+                };
+            }
         }
     }
 
-    public override bool IsPrimary
-    {
-        get
-        {
-            VerifyAccess();
-            return InternalData.IsPrimary;
-        }
-    }
+    private bool _isValid;
+    public override bool IsValid => _isValid;
 
-    public override string Name
-    {
-        get
-        {
-            VerifyAccess();
-            return InternalData.Name;
-        }
-    }
+    private bool _isPrimary;
+    public override bool IsPrimary => _isPrimary;
 
-    public override Point Position
-    {
-        get
-        {
-            VerifyAccess();
-            return InternalData.Position;
-        }
-    }
+    private string _name;
+    public override string Name => _name;
 
-    public override SizeF Size
-    {
-        get
-        {
-            VerifyAccess();
-            return InternalData.Size;
-        }
-    }
+    private Point _position;
+    public override Point Position => _position;
 
-    public override Size SizeInPixels
-    {
-        get
-        {
-            VerifyAccess();
-            return InternalData.SizeInPixels;
-        }
-    }
+    private SizeF _size;
+    public override SizeF Size => _size;
 
-    public override ref readonly Dpi Dpi
-    {
-        get
-        {
-            VerifyAccess();
-            return ref InternalData.Dpi;
-        }
-    }
+    private Size _sizeInPixels;
+    public override Size SizeInPixels => _sizeInPixels;
 
-    public override int RefreshRate
-    {
-        get
-        {
-            VerifyAccess();
-            return InternalData.RefreshRate;
-        }
-    }
+    private Dpi _dpi;
+    public override ref readonly Dpi Dpi => ref _dpi;
 
-    public override DisplayOrientation DisplayOrientation
+    private int _refreshRate;
+    public override int RefreshRate => _refreshRate;
+
+    private DisplayOrientation _displayOrientation;
+    public override DisplayOrientation DisplayOrientation => _displayOrientation;
+
+
+    public bool Equals(Win32Screen? other)
     {
-        get
-        {
-            VerifyAccess();
-            return InternalData.DisplayOrientation;
-        }
+        return other != null &&
+            IsValid == other.IsValid &&
+            Name == other.Name &&
+            IsPrimary == other.IsPrimary &&
+            Position.Equals(other.Position) &&
+            Size.Equals(other.Size) &&
+            Dpi.Equals(other.Dpi) &&
+            RefreshRate.Equals(other.RefreshRate) &&
+            DisplayOrientation == other.DisplayOrientation;
     }
 }
