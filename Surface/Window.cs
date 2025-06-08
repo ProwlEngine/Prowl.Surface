@@ -6,7 +6,10 @@ using System;
 using System.Drawing;
 
 using Prowl.Surface.Events;
+using Prowl.Surface.Platforms;
+using Prowl.Surface.Platforms.Wayland;
 using Prowl.Surface.Platforms.Win32;
+using Prowl.Surface.Platforms.X11;
 using Prowl.Surface.Threading;
 
 namespace Prowl.Surface;
@@ -291,9 +294,14 @@ public abstract class Window : DispatcherObject, INativeWindow
     {
         options.Verify();
 
-        if (OperatingSystem.IsWindows())
+        switch (WindowPlatform.GetBestPlatform())
         {
-            return new Win32Window(options);
+            case PlatformType.Win32:
+                return new Win32Window(options);
+            case PlatformType.Wayland:
+                return new WaylandWindow(options);
+            case PlatformType.X11:
+                return new X11Window(options);
         }
 
         throw new PlatformNotSupportedException();

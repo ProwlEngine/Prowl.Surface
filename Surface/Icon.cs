@@ -5,7 +5,10 @@
 using System;
 using System.Drawing;
 
+using Prowl.Surface.Platforms;
+using Prowl.Surface.Platforms.Wayland;
 using Prowl.Surface.Platforms.Win32;
+using Prowl.Surface.Platforms.X11;
 
 namespace Prowl.Surface;
 
@@ -94,7 +97,15 @@ public sealed class Icon
 
     private static IconImpl CreateIconImpl()
     {
-        if (OperatingSystem.IsWindows()) return new Win32Icon();
+        switch (WindowPlatform.GetBestPlatform())
+        {
+            case PlatformType.Win32:
+                return new Win32Icon();
+            case PlatformType.Wayland:
+                return new WaylandIcon();
+            case PlatformType.X11:
+                return new X11Icon();
+        }
 
         throw new PlatformNotSupportedException();
     }

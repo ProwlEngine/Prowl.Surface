@@ -4,7 +4,10 @@
 
 using System;
 
+using Prowl.Surface.Platforms;
+using Prowl.Surface.Platforms.Wayland;
 using Prowl.Surface.Platforms.Win32;
+using Prowl.Surface.Platforms.X11;
 
 // ReSharper disable InconsistentNaming
 
@@ -112,7 +115,16 @@ public sealed class Cursor
 
     private static CursorImpl GetCursorManager()
     {
-        if (OperatingSystem.IsWindows()) return new Win32Cursor();
+        switch (WindowPlatform.GetBestPlatform())
+        {
+            case PlatformType.Win32:
+                return new Win32Cursor();
+            case PlatformType.Wayland:
+                return new WaylandCursor();
+            case PlatformType.X11:
+                return new X11Cursor();
+        }
+
         throw new PlatformNotSupportedException();
     }
 

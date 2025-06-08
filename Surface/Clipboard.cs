@@ -6,7 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Prowl.Surface.Platforms;
+using Prowl.Surface.Platforms.Wayland;
 using Prowl.Surface.Platforms.Win32;
+using Prowl.Surface.Platforms.X11;
 
 namespace Prowl.Surface;
 
@@ -76,9 +79,14 @@ public static class Clipboard
 
     private static ClipboardImpl GetClipboardImpl()
     {
-        if (OperatingSystem.IsWindows())
+        switch (WindowPlatform.GetBestPlatform())
         {
-            return new Win32Clipboard();
+            case PlatformType.Win32:
+                return new Win32Clipboard();
+            case PlatformType.Wayland:
+                return new WaylandClipboard();
+            case PlatformType.X11:
+                return new X11Clipboard();
         }
 
         throw new PlatformNotSupportedException();

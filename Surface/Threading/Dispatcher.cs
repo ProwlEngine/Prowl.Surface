@@ -12,8 +12,10 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 
 using Prowl.Surface.Input;
+using Prowl.Surface.Platforms;
 using Prowl.Surface.Platforms.Wayland;
 using Prowl.Surface.Platforms.Win32;
+using Prowl.Surface.Platforms.X11;
 using Prowl.Surface.Threading.Events;
 
 namespace Prowl.Surface.Threading;
@@ -132,13 +134,14 @@ public abstract partial class Dispatcher
 
     private static Dispatcher CreateDispatcher(Thread thread)
     {
-        if (OperatingSystem.IsWindows())
+        switch (WindowPlatform.GetBestPlatform())
         {
-            return new Win32Dispatcher(thread);
-        }
-        else if (OperatingSystem.IsLinux())
-        {
-            return new WaylandDispatcher(thread);
+            case PlatformType.Win32:
+                return new Win32Dispatcher(thread);
+            case PlatformType.Wayland:
+                return new WaylandDispatcher(thread);
+            case PlatformType.X11:
+                return new X11Dispatcher(thread);
         }
 
         throw new PlatformNotSupportedException();
