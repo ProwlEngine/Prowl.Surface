@@ -101,7 +101,7 @@ internal unsafe class Win32Dispatcher : Dispatcher
         var icon = LoadIconW(Win32Helper.ModuleHandle, IDI_APPLICATION);
 
         var guidAsString = Guid.NewGuid().ToString("N");
-        var className = $"Prowl.Surface-{guidAsString}";
+        var className = $"Surface-{guidAsString}";
         fixed (char* lpszClassName = className)
         {
             // Initialize the window class.
@@ -147,10 +147,10 @@ internal unsafe class Win32Dispatcher : Dispatcher
             _hotplugDetected = RegisterWindowMessageW((ushort*)lpszClassName);
         }
 
-        fixed (char* lpszWindowMessage = "Prowl.Surface.DispatcherProcessQueue")
+        fixed (char* lpszWindowMessage = "Surface.DispatcherProcessQueue")
             WM_DISPATCHER_QUEUE = RegisterWindowMessageW((ushort*)lpszWindowMessage);
 
-        var windowName = $"Prowl.Surface-Dispatcher-{guidAsString}";
+        var windowName = $"Surface-Dispatcher-{guidAsString}";
         fixed (char* lpWindowName = windowName)
             Hwnd = CreateWindowEx(0, (ushort*)ClassAtom, (ushort*)lpWindowName, 0, 0, 0, 0, 0, HWND.HWND_MESSAGE, HMENU.NULL, HINSTANCE.NULL, null);
     }
@@ -349,25 +349,13 @@ internal unsafe class Win32Dispatcher : Dispatcher
                         break;
 
                     case WM_DESTROY:
-                        {
-                            result = winWindow.WindowProc(hWnd, message, wParam, lParam);
-                            UnRegisterWindow(winWindow);
-
-                            // If we don't have anymore windows running, then we shutdown the loop
-                            // TODO: We might want to change this default behavior and so make it more pluggable
-                            if (_windows.Count == 0)
-                            {
-                                Shutdown();
-                            }
-                            result = 0;
-                        }
+                        result = winWindow.WindowProc(hWnd, message, wParam, lParam);
+                        UnRegisterWindow(winWindow);
                         break;
 
                     default:
-                        {
-                            result = winWindow.WindowProc(hWnd, message, wParam, lParam);
-                            break;
-                        }
+                        result = winWindow.WindowProc(hWnd, message, wParam, lParam);
+                        break;
                 }
             }
         }
