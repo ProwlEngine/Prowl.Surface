@@ -173,14 +173,4 @@ public enum FrameChangeKind
     /// The <see cref="Window.Decorations"/> has been changed.
     /// </summary>
     DecorationsChanged,
-
-    /// <summary>
-    /// The Window system theme has changed.
-    /// </summary>
-    ThemeChanged,
-
-    /// <summary>
-    /// The <see cref="Window.ThemeSyncMode"/> has been changed.
-    /// </summary>
-    ThemeSyncModeChanged
 }
