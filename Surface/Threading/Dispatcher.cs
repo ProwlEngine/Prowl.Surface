@@ -25,6 +25,10 @@ namespace Prowl.Surface.Threading;
 /// </summary>
 public abstract partial class Dispatcher
 {
+    private object _threadLock;
+    internal object ThreadLock => _threadLock ??= new object();
+
+
     private bool _hasShutdownStarted;
     private bool _hasShutdownFinished;
     private readonly IdleEvent _idleEvent;
