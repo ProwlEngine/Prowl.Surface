@@ -45,7 +45,7 @@ internal unsafe class Win32Cursor : CursorImpl
         {
             CursorType.None => (ushort*)0,
             CursorType.No => IDC_NO,
-            CursorType.Arrow => IDC_ARROW,
+            CursorType.Default or CursorType.Arrow => IDC_ARROW,
             CursorType.Cross => IDC_CROSS,
             CursorType.IBeam => IDC_IBEAM,
             CursorType.SizeAll => IDC_SIZEALL,
