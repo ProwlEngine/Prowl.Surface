@@ -33,7 +33,8 @@ public abstract partial class Dispatcher
     /// <exception cref="ArgumentNullException">If the action is null.</exception>
     public void Invoke(Action action, CancellationToken? cancellationToken = null)
     {
-        if (action == null) throw new ArgumentNullException(nameof(action));
+        ArgumentNullException.ThrowIfNull(action);
+
         if (CheckAccess())
         {
             if (cancellationToken is null)
@@ -63,8 +64,10 @@ public abstract partial class Dispatcher
     /// <exception cref="ArgumentNullException">If the function is null.</exception>
     public T Invoke<T>(Func<T> func, CancellationToken? cancellationToken = null)
     {
-        if (func == null) throw new ArgumentNullException(nameof(func));
+        ArgumentNullException.ThrowIfNull(func);
+
         Task<T> task;
+
         if (CheckAccess())
         {
             if (cancellationToken is null)
@@ -95,7 +98,8 @@ public abstract partial class Dispatcher
     /// <exception cref="ArgumentNullException">If the action is null.</exception>
     public void InvokeAsyncAndForget(Action action, CancellationToken? cancellationToken = null)
     {
-        if (action == null) throw new ArgumentNullException(nameof(action));
+        ArgumentNullException.ThrowIfNull(action);
+
         QueueDispatcherJob(action, cancellationToken);
     }
 
@@ -107,7 +111,7 @@ public abstract partial class Dispatcher
     /// <exception cref="ArgumentNullException">If the action is null.</exception>
     public Task InvokeAsync(Action action, CancellationToken? cancellationToken = null)
     {
-        if (action == null) throw new ArgumentNullException(nameof(action));
+        ArgumentNullException.ThrowIfNull(action);
 
         var task = new Task(action, cancellationToken ?? CancellationToken.None);
         task.Start(_taskScheduler);
@@ -123,7 +127,7 @@ public abstract partial class Dispatcher
     /// <exception cref="ArgumentNullException">If the action is null.</exception>
     public Task<T> InvokeAsync<T>(Func<T> func, CancellationToken? cancellationToken = null)
     {
-        if (func == null) throw new ArgumentNullException(nameof(func));
+        ArgumentNullException.ThrowIfNull(func);
 
         var task = new Task<T>(func, cancellationToken ?? CancellationToken.None);
         task.Start(_taskScheduler);
