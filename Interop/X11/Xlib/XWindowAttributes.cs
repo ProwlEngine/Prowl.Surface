@@ -39,7 +39,7 @@ public unsafe partial struct XWindowAttributes
 
     public int save_under;
 
-    public Colormap colormap;
+    public XColormap colormap;
 
     public int map_installed;
 

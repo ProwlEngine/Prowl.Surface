@@ -7,7 +7,7 @@ namespace TerraFX.Interop.Xlib;
 
 public unsafe partial struct XNoExposeEvent
 {
-    public int type;
+    public XEventName type;
 
     [NativeTypeName("unsigned long")]
     public nuint serial;
@@ -16,7 +16,7 @@ public unsafe partial struct XNoExposeEvent
 
     public XDisplay* display;
 
-    public Drawable drawable;
+    public XDrawable drawable;
 
     public int major_code;
 

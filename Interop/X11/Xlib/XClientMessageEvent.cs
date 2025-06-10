@@ -12,7 +12,7 @@ namespace TerraFX.Interop.Xlib;
 
 public unsafe partial struct XClientMessageEvent
 {
-    public int type;
+    public XEventName type;
 
     [NativeTypeName("unsigned long")]
     public nuint serial;
@@ -34,38 +34,12 @@ public unsafe partial struct XClientMessageEvent
     public unsafe partial struct _data_e__Union
     {
         [FieldOffset(0)]
-        [NativeTypeName("char[20]")]
         public fixed sbyte b[20];
 
         [FieldOffset(0)]
-        [NativeTypeName("short[10]")]
         public fixed short s[10];
 
         [FieldOffset(0)]
-        [NativeTypeName("long[5]")]
-        public _l_e__FixedBuffer l;
-
-        public partial struct _l_e__FixedBuffer
-        {
-            public nint e0;
-            public nint e1;
-            public nint e2;
-            public nint e3;
-            public nint e4;
-
-            [UnscopedRef]
-            public ref nint this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<nint> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 5);
-        }
+        public fixed long l[5];
     }
 }

@@ -7,7 +7,7 @@ namespace TerraFX.Interop.Xlib;
 
 public unsafe partial struct XErrorEvent
 {
-    public int type;
+    public XEventName type;
 
     public XDisplay* display;
 

@@ -14,7 +14,7 @@ public partial struct XWMHints
 
     public int initial_state;
 
-    public Pixmap icon_pixmap;
+    public XPixmap icon_pixmap;
 
     public XWindow icon_window;
 
@@ -22,7 +22,7 @@ public partial struct XWMHints
 
     public int icon_y;
 
-    public Pixmap icon_mask;
+    public XPixmap icon_mask;
 
     public nuint window_group;
 }

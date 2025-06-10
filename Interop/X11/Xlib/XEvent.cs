@@ -3,18 +3,15 @@
 // Ported from include/X11/Xlib.h in the Xlib - C Language X Interface: X Version 11, Release 7.7
 // Original source is Copyright © The Open Group
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace TerraFX.Interop.Xlib;
 
 [StructLayout(LayoutKind.Explicit)]
-public partial struct XEvent
+public unsafe struct XEvent
 {
     [FieldOffset(0)]
-    public int type;
+    public XEventName type;
 
     [FieldOffset(0)]
     public XAnyEvent xany;
@@ -116,48 +113,5 @@ public partial struct XEvent
     public XGenericEventCookie xcookie;
 
     [FieldOffset(0)]
-    [NativeTypeName("long[24]")]
-    public _pad_e__FixedBuffer pad;
-
-    public partial struct _pad_e__FixedBuffer
-    {
-        public nint e0;
-        public nint e1;
-        public nint e2;
-        public nint e3;
-        public nint e4;
-        public nint e5;
-        public nint e6;
-        public nint e7;
-        public nint e8;
-        public nint e9;
-        public nint e10;
-        public nint e11;
-        public nint e12;
-        public nint e13;
-        public nint e14;
-        public nint e15;
-        public nint e16;
-        public nint e17;
-        public nint e18;
-        public nint e19;
-        public nint e20;
-        public nint e21;
-        public nint e22;
-        public nint e23;
-
-        [UnscopedRef]
-        public ref nint this[int index]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                return ref AsSpan()[index];
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [UnscopedRef]
-        public Span<nint> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 24);
-    }
+    public fixed long pad[24];
 }

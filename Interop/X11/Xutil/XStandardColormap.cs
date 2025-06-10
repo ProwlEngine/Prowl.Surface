@@ -7,7 +7,7 @@ namespace TerraFX.Interop.Xlib;
 
 public partial struct XStandardColormap
 {
-    public Colormap colormap;
+    public XColormap colormap;
 
     [NativeTypeName("unsigned long")]
     public nuint red_max;

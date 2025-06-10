@@ -7,7 +7,7 @@ namespace TerraFX.Interop.Xlib;
 
 public unsafe partial struct XCrossingEvent
 {
-    public int type;
+    public XEventName type;
 
     [NativeTypeName("unsigned long")]
     public nuint serial;

@@ -7,15 +7,13 @@ namespace TerraFX.Interop.Xlib;
 
 public partial struct XSetWindowAttributes
 {
-    public Pixmap background_pixmap;
+    public XPixmap background_pixmap;
 
-    [NativeTypeName("unsigned long")]
-    public nuint background_pixel;
+    public ulong background_pixel;
 
-    public Pixmap border_pixmap;
+    public XPixmap border_pixmap;
 
-    [NativeTypeName("unsigned long")]
-    public nuint border_pixel;
+    public ulong border_pixel;
 
     public int bit_gravity;
 
@@ -23,23 +21,19 @@ public partial struct XSetWindowAttributes
 
     public int backing_store;
 
-    [NativeTypeName("unsigned long")]
-    public nuint backing_planes;
+    public ulong backing_planes;
 
-    [NativeTypeName("unsigned long")]
-    public nuint backing_pixel;
+    public ulong backing_pixel;
 
     public int save_under;
 
-    [NativeTypeName("long")]
-    public nint event_mask;
+    public XEventMask event_mask;
 
-    [NativeTypeName("long")]
-    public nint do_not_propagate_mask;
+    public long do_not_propagate_mask;
 
     public int override_redirect;
 
-    public Colormap colormap;
+    public XColormap colormap;
 
-    public Cursor cursor;
+    public XCursor cursor;
 }

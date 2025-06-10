@@ -7,7 +7,7 @@ namespace TerraFX.Interop.Xlib;
 
 public unsafe partial struct XColormapEvent
 {
-    public int type;
+    public XEventName type;
 
     [NativeTypeName("unsigned long")]
     public nuint serial;
@@ -18,7 +18,7 @@ public unsafe partial struct XColormapEvent
 
     public XWindow window;
 
-    public Colormap colormap;
+    public XColormap colormap;
 
     public int c_new;
 

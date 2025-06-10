@@ -66,10 +66,10 @@ public static unsafe partial class Xlib
     public static partial int XrmQGetSearchResource([NativeTypeName("XrmSearchList")] XrmHashBucket** param0, [NativeTypeName("XrmName")] int param1, [NativeTypeName("XrmClass")] int param2, [NativeTypeName("XrmRepresentation *")] int* param3, XrmValue* param4);
 
     [LibraryImport("libX11")]
-    public static partial void XrmSetDatabase(XDisplay* param0, XrmDatabase param1);
+    public static partial void XrmSetDatabase(XDisplay* display, XrmDatabase param1);
 
     [LibraryImport("libX11")]
-    public static partial XrmDatabase XrmGetDatabase(XDisplay* param0);
+    public static partial XrmDatabase XrmGetDatabase(XDisplay* display);
 
     [LibraryImport("libX11")]
     public static partial XrmDatabase XrmGetFileDatabase([NativeTypeName("const char *")] sbyte* param0);

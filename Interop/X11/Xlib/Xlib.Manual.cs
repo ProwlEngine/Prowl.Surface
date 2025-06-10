@@ -57,7 +57,7 @@ public static unsafe partial class Xlib
 
     public static int DefaultDepth(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root_depth;
 
-    public static Colormap DefaultColormap(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->cmap;
+    public static XColormap DefaultColormap(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->cmap;
 
     public static int BitmapUnit(XDisplay* dpy) => dpy->bitmap_unit;
 
@@ -85,7 +85,7 @@ public static unsafe partial class Xlib
 
     public static nuint WhitePixelOfScreen(XScreen* s) => s->white_pixel;
 
-    public static Colormap DefaultColormapOfScreen(XScreen* s) => s->cmap;
+    public static XColormap DefaultColormapOfScreen(XScreen* s) => s->cmap;
 
     public static int DefaultDepthOfScreen(XScreen* s) => s->root_depth;
 

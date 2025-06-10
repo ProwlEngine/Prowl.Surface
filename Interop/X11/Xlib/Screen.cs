@@ -32,7 +32,7 @@ public unsafe struct XScreen
 
     public nuint default_gc;
 
-    public Colormap cmap;
+    public XColormap cmap;
 
     [NativeTypeName("unsigned long")]
     public nuint white_pixel;
