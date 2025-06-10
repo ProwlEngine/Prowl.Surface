@@ -14,6 +14,8 @@ public enum CursorType
     /// </summary>
     None = 0,
 
+    Default,
+
     /// <summary>
     /// Standard No Cursor.
     /// </summary>
