@@ -60,9 +60,9 @@ public sealed record WindowCreateOptions
     public bool Resizable { get; init; } = true;
 
     /// <summary>
-    /// Sets the initial title of the window in the title bar. The default is "Prowl.Surface Window".
+    /// Sets the initial title of the window in the title bar. The default is "Surface Window".
     /// </summary>
-    public string Title { get; init; } = "Prowl.Surface Window";
+    public string Title { get; init; } = "Surface Window";
 
     /// <summary>
     /// Sets whether the window should go fullscreen upon creation. Default is <c>false</c>.
@@ -138,7 +138,7 @@ public sealed record WindowCreateOptions
     public bool EnableComposition { get; init; } = false;
 
     /// <summary>
-    /// Sets the DPI value used by the Window at creation time if <see cref="DpiMode"/> is set to <see cref="Prowl.Surface.DpiMode.Auto"/>. Default is Dpi(96, 96).
+    /// Sets the DPI value used by the Window at creation time if <see cref="DpiMode"/> is set to <see cref="DpiMode.Auto"/>. Default is Dpi(96, 96).
     /// </summary>
     public Dpi ManualDpi { get; init; } = Dpi.Default;
 
