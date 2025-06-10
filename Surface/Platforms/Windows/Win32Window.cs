@@ -2391,15 +2391,6 @@ internal unsafe class Win32Window : Window
         return Win32Helper.ToColor((COLORREF)GetSysColor(COLOR.COLOR_WINDOW));
     }
 
-    private void VerifyAccessAndNotDestroyed()
-    {
-        VerifyAccess();
-        if (_disposed)
-        {
-            throw new InvalidOperationException("This window has been closed and destroyed.");
-        }
-    }
-
     private void VerifyNotFullScreen()
     {
         if (_isFullscreen) throw new ArgumentException("Cannot change this property when the screen is in fullscreen");
