@@ -14,6 +14,7 @@ namespace Prowl.Surface.Platforms.X11;
 [SupportedOSPlatform("linux")]
 internal unsafe sealed class X11Screen : Screen
 {
+    // Default constructor - gets values from base Xlib
     internal unsafe X11Screen()
     {
         IsPrimary = true;
@@ -36,6 +37,7 @@ internal unsafe sealed class X11Screen : Screen
     }
 
 
+    // If XRandr is available, gets complex multi-monitor info from here
     internal unsafe X11Screen(XRRMonitorInfo monitorInfo, XRRScreenResources* resources)
     {
         IsPrimary = monitorInfo.primary != 0;
