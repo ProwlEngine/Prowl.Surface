@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NWindows\NWindows.csproj" />
+    <ProjectReference Include="..\..\Surface\Prowl.Surface.csproj" />
   </ItemGroup>
 
 </Project>
