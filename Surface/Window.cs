@@ -322,6 +322,15 @@ public abstract class Window : DispatcherObject, INativeWindow
         if (Kind == WindowKind.Win32Child) throw new InvalidOperationException("Cannot perform this operation on a child window.");
     }
 
+    internal void VerifyAccessAndNotDestroyed()
+    {
+        VerifyAccess();
+        if (IsDisposed)
+        {
+            throw new InvalidOperationException("This window has been closed and destroyed.");
+        }
+    }
+
     internal void OnWindowEvent(WindowEvent evt)
     {
         Events.OnWindowEvent(this, evt);
