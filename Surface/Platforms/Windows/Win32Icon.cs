@@ -20,7 +20,7 @@ internal unsafe class Win32Icon : IconImpl
 {
     public override Icon GetApplicationIcon()
     {
-        var icon = GetApplicationIcon(new Size(64, 64)) ?? (GetApplicationIcon(new Size(32, 32)) ?? GetApplicationIcon(new Size(16, 16)));
+        var icon = GetApplicationIcon(new Size(64, 64)) ?? GetApplicationIcon(new Size(32, 32)) ?? GetApplicationIcon(new Size(16, 16));
         if (icon == null)
         {
             throw new InvalidOperationException("Unable to retrieve application icon");
@@ -36,12 +36,11 @@ internal unsafe class Win32Icon : IconImpl
 
     private static HBITMAP CreateNativeBitmap(Icon image)
     {
-
-        var sizeInBytes = image.Buffer.Length * sizeof(Icon.Rgba32);
+        var sizeInBytes = image.Buffer.Length * sizeof(Rgba32);
         var ptr = NativeMemory.Alloc((nuint)sizeInBytes);
         if (ptr == null) throw new OutOfMemoryException($"Unable to allocate native memory for icon (requested size: {sizeInBytes} bytes)");
 
-        var span = new Span<Icon.Rgba32>(ptr, image.Buffer.Length);
+        var span = new Span<Rgba32>(ptr, image.Buffer.Length);
         image.Buffer.CopyTo(span);
         SwapBgra(span);
 
@@ -96,7 +95,7 @@ internal unsafe class Win32Icon : IconImpl
 
         var image = new Icon(width, height);
 
-        fixed (Icon.Rgba32* pBuffer = image.Buffer)
+        fixed (Rgba32* pBuffer = image.Buffer)
         {
             var sizeInBytes = width * height * sizeof(uint);
             var copied = GetBitmapBits(hbitmap, sizeInBytes, pBuffer);
@@ -108,7 +107,7 @@ internal unsafe class Win32Icon : IconImpl
         return image;
     }
 
-    private static void SwapBgra(Span<Icon.Rgba32> buffer)
+    private static void SwapBgra(Span<Rgba32> buffer)
     {
         for (int i = 0; i < buffer.Length; i++)
         {
