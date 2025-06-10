@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 using Prowl.Surface.Input;
 
@@ -17,6 +18,8 @@ internal unsafe static class X11Globals
         {
             if (s_display == null)
                 s_display = Xlib.XOpenDisplay(null);
+
+            Xlib.XSetErrorHandler(&ErrorHandler);
 
             return s_display;
         }
@@ -37,8 +40,33 @@ internal unsafe static class X11Globals
     }
 
 
+    private static XColormap s_defaultColormap;
+    public static XColormap DefaultColormap
+    {
+        get
+        {
+            if (s_defaultColormap.Value == null)
+                s_defaultColormap = Xlib.XDefaultColormap(Display, 0);
+
+            return s_defaultColormap;
+        }
+    }
+
+
     public static void Shutdown()
     {
         Xlib.XCloseDisplay(Display);
+    }
+
+
+    [UnmanagedCallersOnly]
+    internal static int ErrorHandler(XDisplay* display, XErrorEvent* errEvent)
+    {
+        byte* data = stackalloc byte[1024];
+        Xlib.XGetErrorText(Display, errEvent->error_code, data, 1024);
+
+        Console.WriteLine($"Error in X server: {System.Text.Encoding.UTF8.GetString(data, 1024)}.");
+
+        return 1;
     }
 }
