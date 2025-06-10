@@ -24,11 +24,6 @@ var mainWindow = Window.Create(new()
 
 mainWindow.Events.Frame += (window, evt) =>
 {
-    // Update the background color if the theme changed
-    if (evt.ChangeKind == FrameChangeKind.ThemeChanged)
-    {
-        window.BackgroundColor = GetCurrentThemeColor();
-    }
 };
 
 Console.WriteLine("----------------------------------------------------");

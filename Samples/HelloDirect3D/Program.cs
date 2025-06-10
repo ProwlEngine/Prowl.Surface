@@ -19,11 +19,6 @@ var mainWindow = Window.Create(new()
 
 mainWindow.Events.Frame += (window, evt) =>
 {
-    if (evt.ChangeKind == FrameChangeKind.ThemeChanged)
-    {
-        // Update the background color if the theme changed
-        window.BackgroundColor = GetCurrentThemeColor();
-    }
 };
 
 var helloTriangle = new HelloTriangle11(mainWindow)
