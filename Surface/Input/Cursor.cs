@@ -42,68 +42,87 @@ public sealed class Cursor
     /// </summary>
     /// <remarks>
     /// - On Windows: This is a HCURSOR.
+    /// - On X11: This is a Cursor pointer.
     /// </remarks>
     public nint Handle { get; }
 
     /// <summary>
     /// Gets a cursor that should not be displayed at all.
     /// </summary>
-    public static Cursor None => CursorNone.Instance;
+    public static Cursor None => s_none ??= Impl.GetCursor(CursorType.None);
+    private static Cursor? s_none;
+
+    /// <summary>
+    /// Gets the default platform cursor.
+    /// </summary>
+    public static Cursor Default => s_default ??= Impl.GetCursor(CursorType.Default);
+    private static Cursor? s_default;
 
     /// <summary>
     /// Gets the Standard arrow cursor.
     /// </summary>
-    public static Cursor Arrow => CursorArrow.Instance;
+    public static Cursor Arrow => s_arrow ??= Impl.GetCursor(CursorType.Arrow);
+    private static Cursor? s_arrow;
 
     /// <summary>
     /// Gets the Text I-Beam cursor.
     /// </summary>
-    public static Cursor IBeam => CursorIBeam.Instance;
+    public static Cursor IBeam => s_ibeam ??= Impl.GetCursor(CursorType.IBeam);
+    private static Cursor? s_ibeam;
 
     /// <summary>
     /// Gets the Hourglass cursor.
     /// </summary>
-    public static Cursor Wait => CursorWait.Instance;
+    public static Cursor Wait => s_wait ??= Impl.GetCursor(CursorType.Wait);
+    private static Cursor? s_wait;
 
     /// <summary>
     /// Gets the CrossHair cursor.
     /// </summary>
-    public static Cursor Cross => CursorCross.Instance;
+    public static Cursor Cross => s_cross ??= Impl.GetCursor(CursorType.Cross);
+    private static Cursor? s_cross;
 
     /// <summary>
     /// Gets the Double arrow pointing NW and SE.
     /// </summary>
-    public static Cursor SizeNWSE => CursorSizeNWSE.Instance;
+    public static Cursor SizeNWSE => s_sizenwse ??= Impl.GetCursor(CursorType.SizeNWSE);
+    private static Cursor? s_sizenwse;
 
     /// <summary>
     /// Gets the Double arrow pointing NE and SW.
     /// </summary>
-    public static Cursor SizeNESW => CursorSizeNESW.Instance;
+    public static Cursor SizeNESW => s_sizenesw ??= Impl.GetCursor(CursorType.SizeNESW);
+    private static Cursor? s_sizenesw;
 
     /// <summary>
     /// Gets the Double arrow pointing W and E.
     /// </summary>
-    public static Cursor SizeWE => CursorSizeWE.Instance;
+    public static Cursor SizeWE => s_sizewe ??= Impl.GetCursor(CursorType.SizeWE);
+    private static Cursor? s_sizewe;
 
     /// <summary>
     /// Gets the Double arrow pointing N and S.
     /// </summary>
-    public static Cursor SizeNS => CursorSizeNS.Instance;
+    public static Cursor SizeNS => s_sizens ??= Impl.GetCursor(CursorType.SizeNS);
+    private static Cursor? s_sizens;
 
     /// <summary>
     /// Gets the Four-way pointing cursor.
     /// </summary>
-    public static Cursor SizeAll => CursorSizeAll.Instance;
+    public static Cursor SizeAll => s_sizeall ??= Impl.GetCursor(CursorType.SizeAll);
+    private static Cursor? s_sizeall;
 
     /// <summary>
     /// Gets the Standard No Cursor.
     /// </summary>
-    public static Cursor No => CursorNo.Instance;
+    public static Cursor No => s_no ??= Impl.GetCursor(CursorType.No);
+    private static Cursor? s_no;
 
     /// <summary>
     /// Gets the Hand cursor.
     /// </summary>
-    public static Cursor Hand => CursorHand.Instance;
+    public static Cursor Hand => s_hand ??= Impl.GetCursor(CursorType.Hand);
+    private static Cursor? s_hand;
 
     /// <summary>
     /// Loads the specified cursor from a file.
@@ -111,7 +130,7 @@ public sealed class Cursor
     /// <param name="fileName"></param>
     /// <returns></returns>
     /// TODO: Not implemented yet.
-    private static Cursor LoadFromFile(string fileName) => Impl.LoadFromFile(fileName);
+    private static Cursor LoadFromImage(string fileName) => Impl.LoadFromFile(fileName);
 
     private static CursorImpl GetCursorManager()
     {
@@ -126,68 +145,5 @@ public sealed class Cursor
         }
 
         throw new PlatformNotSupportedException();
-    }
-
-    // Following are the cursors instances, one per static class to avoid loading all of them
-    // if we are only using one of them (or none)
-
-    private static class CursorNone
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.None);
-    }
-
-    private static class CursorArrow
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.Arrow);
-    }
-
-    private static class CursorIBeam
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.IBeam);
-    }
-
-    private static class CursorWait
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.Wait);
-    }
-
-    private static class CursorCross
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.Cross);
-    }
-
-    private static class CursorSizeNWSE
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.SizeNWSE);
-    }
-
-    private static class CursorSizeNESW
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.SizeNESW);
-    }
-
-    private static class CursorSizeWE
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.SizeWE);
-    }
-
-    private static class CursorSizeNS
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.SizeNS);
-    }
-
-    private static class CursorSizeAll
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.SizeAll);
-    }
-
-    private static class CursorNo
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.No);
-    }
-
-    private static class CursorHand
-    {
-        public static readonly Cursor Instance = Impl.GetCursor(CursorType.Hand);
     }
 }
