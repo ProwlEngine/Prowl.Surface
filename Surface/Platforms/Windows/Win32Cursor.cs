@@ -36,7 +36,7 @@ internal unsafe class Win32Cursor : CursorImpl
 
     public override Cursor LoadFromFile(string fileName)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     private static ushort* GetIDCCursor(CursorType cursorType)

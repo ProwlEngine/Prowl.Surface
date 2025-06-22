@@ -18,11 +18,6 @@ public record DragDropEvent() : WindowEvent(WindowEventKind.DragDrop)
     public DragDropKind DragDropKind { get; set; }
 
     /// <summary>
-    /// Gets the state of the key.
-    /// </summary>
-    public DragDropKeyStates KeyStates { get; set; }
-
-    /// <summary>
     /// Gets the effects associated with this drag/drop operation.
     /// </summary>
     public DataTransferEffects Effects { get; set; }
@@ -52,7 +47,6 @@ public record DragDropEvent() : WindowEvent(WindowEventKind.DragDrop)
             builder.Append(", ");
         }
         builder.Append(nameof(DragDropKind)).Append(" = ").Append(DragDropKind).Append(", ");
-        builder.Append(nameof(KeyStates)).Append(" = ").Append(KeyStates).Append(", ");
         builder.Append(nameof(Position)).Append(" = ").Append(Position).Append(", ");
         builder.Append(nameof(Data)).Append(" = ");
         if (Data is FileTransferList list)

@@ -17,32 +17,6 @@ namespace Prowl.Surface.Platforms.Win32;
 [SupportedOSPlatform("windows")]
 internal static class Win32KeyInterop
 {
-    public static ModifierKeys GetSystemModifierKeys()
-    {
-        ModifierKeys modifierKeys = ModifierKeys.None;
-
-        short keyState = GetKeyState(VK_SHIFT);
-        if ((keyState & 0x8000) == 0x8000)
-        {
-            modifierKeys |= ModifierKeys.Shift;
-        }
-
-        keyState = GetKeyState(VK_CONTROL);
-        if ((keyState & 0x8000) == 0x8000)
-        {
-            modifierKeys |= ModifierKeys.Control;
-        }
-
-        keyState = GetKeyState(VK_MENU);
-        if ((keyState & 0x8000) == 0x8000)
-        {
-            modifierKeys |= ModifierKeys.Alt;
-        }
-
-        return modifierKeys;
-    }
-
-
     private static readonly IReadOnlyDictionary<int, Key> s_keyMappings = new Dictionary<int, Key>()
     {
         { VK_CANCEL, Key.Cancel },

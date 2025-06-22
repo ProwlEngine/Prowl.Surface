@@ -13,7 +13,7 @@ namespace Prowl.Surface.Platforms.Wayland;
 [SupportedOSPlatform("linux")]
 internal unsafe class WaylandWindow : Window
 {
-    public WaylandWindow(WindowCreateOptions options) : base(options)
+    public WaylandWindow(WindowCreateOptions options)
     {
         WlDisplay display = WlDisplay.Connect();
         WlRegistry registry = display.GetRegistry();
@@ -21,16 +21,14 @@ internal unsafe class WaylandWindow : Window
 
 
     public override bool Decorations { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override Dpi Dpi { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override DpiMode DpiMode { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override Color BackgroundColor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool Enable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public override bool IsDisposed => throw new NotImplementedException();
 
     public override string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override SizeF Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override SizeF ClientSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Size Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Size ClientSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override Point Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool Visible { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool DragDrop { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -47,6 +45,8 @@ internal unsafe class WaylandWindow : Window
     public override SizeF MaximumSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool Modal { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool ShowInTaskBar { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override nint Handle { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
+    public override WindowKind Kind { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
 
     public override void Activate() => throw new NotImplementedException();
     public override void CenterToParent() => throw new NotImplementedException();

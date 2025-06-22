@@ -13,7 +13,6 @@ using System.Runtime.Versioning;
 using System.Threading;
 
 using Prowl.Surface.Events;
-using Prowl.Surface.Threading;
 
 using TerraFX.Interop.Windows;
 using TerraFX.Interop.WinRT;
@@ -32,13 +31,10 @@ namespace Prowl.Surface.Platforms.Win32;
 /// Implementation of the Dispatcher for Windows.
 /// </summary>
 [SupportedOSPlatform("windows10.0.14393.0")]
-internal unsafe class Win32Dispatcher : Dispatcher
+internal unsafe class Win32Dispatcher
 {
     private Win32Message _previousMessage;
     internal HWND Hwnd;
-    private nuint _timerId;
-    private readonly Dictionary<nuint, DispatcherTimer> _mapTimerIdToTimer;
-    private readonly Dictionary<DispatcherTimer, nuint> _mapTimerToTimerId;
 
     private readonly List<Win32Window> _windows;
     private readonly Dictionary<HWND, Win32Window> _mapHandleToWindow;
@@ -63,7 +59,7 @@ internal unsafe class Win32Dispatcher : Dispatcher
 
     [ThreadStatic] internal static GCHandle CreatedWindowHandle;
 
-    public Win32Dispatcher(Thread thread) : base(thread)
+    public Win32Dispatcher() : base()
     {
         // Make sure that we are supporting the Windows version
         // This should be guaranteed by .NET 7 OS requirements, but we are still double checking
@@ -74,8 +70,6 @@ internal unsafe class Win32Dispatcher : Dispatcher
 
         _windows = new List<Win32Window>();
         _mapHandleToWindow = new Dictionary<HWND, Win32Window>();
-        _mapTimerIdToTimer = new Dictionary<nuint, DispatcherTimer>();
-        _mapTimerToTimerId = new Dictionary<DispatcherTimer, nuint>(ReferenceEqualityComparer.Instance);
         _systemEvent = new SystemEvent();
 
         // Initialize Ole (for drag&drop)
@@ -84,9 +78,6 @@ internal unsafe class Win32Dispatcher : Dispatcher
 
         // Initialize WinRT (required for Win32WindowSettings)
         WinRT.Initialize();
-
-        ScreenManager = new Win32ScreenManager();
-        InputManager = new Win32InputManager(this);
 
         // Initialization of the keyboard hook only on the dispatcher thread
         lock (GlobalLock)
@@ -162,23 +153,11 @@ internal unsafe class Win32Dispatcher : Dispatcher
 
     public ushort ClassAtom { get; }
 
-    private new static Win32Dispatcher Current => (Win32Dispatcher)Dispatcher.Current;
-
-    internal override void ResetImpl()
+    internal bool PollEventImpl()
     {
-        // Destroy all pending timer
-        foreach (var timer in _mapTimerToTimerId.Keys.ToList())
-        {
-            timer.Stop();
-        }
-    }
+        return false;
 
-    internal override Win32ScreenManager ScreenManager { get; }
-
-    internal override Win32InputManager InputManager { get; }
-
-    internal override void WaitAndDispatchMessage(bool blockOnWait)
-    {
+        /*
         MSG msg;
 
         // We process as many messages as we can in a loop
@@ -228,16 +207,7 @@ internal unsafe class Win32Dispatcher : Dispatcher
                 break;
             }
         }
-    }
-
-    internal override void NotifyJobQueue()
-    {
-        PostMessage(Hwnd, WM_DISPATCHER_QUEUE, 0, 0);
-    }
-
-    internal override void PostQuitToMessageLoop()
-    {
-        PostQuitMessage(0);
+        */
     }
 
     private void RegisterWindow(Win32Window window)
@@ -282,11 +252,12 @@ internal unsafe class Win32Dispatcher : Dispatcher
 
         }
 
-        return updateScreens && ScreenManager.TryUpdateScreens();
+        return updateScreens && PlatformImpl.ScreenManager.TryUpdateScreens();
     }
 
     private LRESULT WindowProc(HWND hWnd, uint message, WPARAM wParam, LPARAM lParam)
     {
+        /*
         // Install our synchronization context
         SynchronizationContext.SetSynchronizationContext(DispatcherSynchronizationContext);
 
@@ -382,12 +353,15 @@ internal unsafe class Win32Dispatcher : Dispatcher
         }
 
         return result;
+        */
+
+        return default;
     }
 
     [UnmanagedCallersOnly]
     private static LRESULT StaticWindowProc(HWND hWnd, uint message, WPARAM wParam, LPARAM lParam)
     {
-        return Current.WindowProc(hWnd, message, wParam, lParam);
+        return default; // Current.WindowProc(hWnd, message, wParam, lParam);
     }
 
     private void ReleaseUnmanagedResources()
@@ -398,57 +372,17 @@ internal unsafe class Win32Dispatcher : Dispatcher
         }
     }
 
-    internal override void CreateOrResetTimer(DispatcherTimer timer, int millis)
-    {
-        bool created = false;
-        if (!_mapTimerToTimerId.TryGetValue(timer, out var timerId))
-        {
-            _timerId++;
-            timerId = _timerId;
-            created = true;
-        }
-
-        if (SetTimer(Hwnd, timerId, (uint)millis, null) == 0)
-        {
-            throw new InvalidOperationException("Unable to create/reset timer.");
-        }
-
-        if (created)
-        {
-            _mapTimerIdToTimer.Add(timerId, timer);
-            _mapTimerToTimerId.Add(timer, timerId);
-        }
-    }
-
-    internal override void DestroyTimer(DispatcherTimer timer)
-    {
-        if (_mapTimerToTimerId.TryGetValue(timer, out var timerId))
-        {
-            _mapTimerToTimerId.Remove(timer);
-            _mapTimerIdToTimer.Remove(timerId);
-            KillTimer(Hwnd, timerId);
-        }
-    }
-
-    public void OnSystemEvent(SystemChangeKind systemChangeKind)
-    {
-        _systemEvent.ChangeKind = systemChangeKind;
-        foreach (var window in _windows)
-        {
-            window.OnWindowEvent(_systemEvent);
-        }
-    }
-
     [UnmanagedCallersOnly]
     private static LRESULT LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
     {
+        /*
         // From https://learn.microsoft.com/en-us/windows/win32/dxtecharts/disabling-shortcut-keys-in-games
         // We want to make sure that the Win keys are not going to be able to modify the position of a fullscreen window
         // So this hook will discard the LWIN/RWIN keys if we have such a window active
         var keyboardHook = _keyboardHook;
         if (nCode == HC_ACTION)
         {
-            var currentDispatcher = (Win32Dispatcher?)TlsCurrentDispatcher;
+            var currentDispatcher = (Win32Dispatcher?)CurrentDispatcher;
 
             var p = (KBDLLHOOKSTRUCT*)lParam;
             switch ((int)wParam)
@@ -468,5 +402,8 @@ internal unsafe class Win32Dispatcher : Dispatcher
         }
 
         return CallNextHookEx(keyboardHook, nCode, wParam, lParam);
+        */
+
+        return default;
     }
 }

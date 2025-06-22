@@ -22,11 +22,6 @@ public record KeyboardEvent() : WindowEvent(WindowEventKind.Keyboard)
     public KeyStates State { get; set; }
 
     /// <summary>
-    /// Gets the key modifiers.
-    /// </summary>
-    public ModifierKeys Modifiers { get; set; }
-
-    /// <summary>
     /// Gets the platform dependent scan code.
     /// </summary>
     public ushort ScanCode { get; set; }

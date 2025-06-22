@@ -17,7 +17,6 @@ namespace Prowl.Surface.Platforms.Win32;
 [SupportedOSPlatform("windows10.0.14393.0")]
 internal sealed unsafe class Win32ScreenManager : ScreenManager
 {
-    private bool _screenAddedOrUpdated;
     private readonly GCHandle _thisGcHandle;
 
     private List<Win32Screen> _itemBuilder;

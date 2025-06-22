@@ -42,6 +42,7 @@ internal static unsafe class Win32Ole
             Thread.CurrentThread.SetApartmentState(ApartmentState.Unknown);
             Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
         }
+
         OleInitialize(NULL);
     }
 

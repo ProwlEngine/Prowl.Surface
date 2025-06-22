@@ -1,8 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-using Prowl.Surface.Input;
-
 using TerraFX.Interop.Xlib;
 
 namespace Prowl.Surface.Platforms.X11;

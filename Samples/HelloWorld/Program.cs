@@ -3,7 +3,6 @@ using System.Drawing;
 using Prowl.Surface;
 using Prowl.Surface.Events;
 using Prowl.Surface.Input;
-using Prowl.Surface.Threading;
 
 var mainWindow = Window.Create(new()
 {
@@ -25,23 +24,13 @@ mainWindow.Opacity = 0.5f;
 
 Console.WriteLine("Press escape to close the Window");
 
-mainWindow.Events.Frame += (window, evt) =>
+while (true)
 {
-};
-
-mainWindow.Events.Close += (window, close) =>
-{
-    Console.WriteLine("Quitting");
-    Dispatcher.Current.Shutdown();
-};
-
-mainWindow.Events.Keyboard += (_, evt) =>
-{
-    if (evt.Key == Key.Escape)
+    while (Window.PollEvent(out WindowEvent ev))
     {
-        mainWindow.Close();
-        evt.Handled = true;
+        if (ev is CloseEvent)
+        {
+            mainWindow.Close();
+        }
     }
-};
-
-Dispatcher.Current.Run();
+}

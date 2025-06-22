@@ -43,17 +43,17 @@ internal sealed unsafe partial class Win32DropTarget : IDisposable
     {
         if (_registered) return;
 
-        var result = (HRESULT)Win32Ole.RegisterDragDrop(_window.HWnd, (nint)_dropTarget);
-        if (result.SUCCEEDED)
-        {
-            _registered = true;
-        }
+        // var result = (HRESULT)Win32Ole.RegisterDragDrop(_window.HWnd, (nint)_dropTarget);
+        // if (result.SUCCEEDED)
+        // {
+        //     _registered = true;
+        // }
     }
 
     public void UnRegister()
     {
         if (_registered) return;
-        _ = Win32Ole.RevokeDragDrop(_window.HWnd);
+        // _ = Win32Ole.RevokeDragDrop(_window.HWnd);
     }
 
     internal HRESULT DragEnter(IDataObject* pDataObj, int grfKeyState, POINTL pt, int* pdwEffect)
@@ -73,8 +73,6 @@ internal sealed unsafe partial class Win32DropTarget : IDisposable
         _dragDropEvent.DragDropKind = DragDropKind.Leave;
         _dragDropEvent.Effects = default;
         _dragDropEvent.Position = default;
-        _dragDropEvent.KeyStates = default;
-        _window.OnWindowEvent(_dragDropEvent);
         return S.S_OK;
     }
 
@@ -89,7 +87,6 @@ internal sealed unsafe partial class Win32DropTarget : IDisposable
         _dragDropEvent.DragDropKind = DragDropKind.Enter;
         _dragDropEvent.Effects = FromEffects(*pdwEffect);
         _dragDropEvent.Position = _window.ScreenToClient(new Point(pt.x, pt.y));
-        _dragDropEvent.KeyStates = GetKeyStates(grfKeyState);
         _dragDropEvent.Data = null;
 
         if (pDataObj != null)
@@ -100,8 +97,6 @@ internal sealed unsafe partial class Win32DropTarget : IDisposable
 
         try
         {
-            _window.OnWindowEvent(_dragDropEvent);
-
             *pdwEffect = _dragDropEvent.Handled ? ToEffects(_dragDropEvent.Effects) : DROPEFFECT_NONE;
         }
         finally
@@ -130,19 +125,6 @@ internal sealed unsafe partial class Win32DropTarget : IDisposable
         if ((effects & DataTransferEffects.Scroll) != 0) dwEffects |= unchecked((int)DROPEFFECT_SCROLL);
         return dwEffects;
     }
-
-    private static DragDropKeyStates GetKeyStates(int grfKeyState)
-    {
-        var key = DragDropKeyStates.None;
-        if ((grfKeyState & MK.MK_CONTROL) != 0) key |= DragDropKeyStates.ControlKey;
-        if ((grfKeyState & MK.MK_SHIFT) != 0) key |= DragDropKeyStates.ShiftKey;
-        if ((grfKeyState & MK.MK_ALT) != 0) key |= DragDropKeyStates.AltKey;
-        if ((grfKeyState & MK.MK_LBUTTON) != 0) key |= DragDropKeyStates.LeftMouseButton;
-        if ((grfKeyState & MK.MK_RBUTTON) != 0) key |= DragDropKeyStates.RightMouseButton;
-        if ((grfKeyState & MK.MK_MBUTTON) != 0) key |= DragDropKeyStates.MiddleMouseButton;
-        return key;
-    }
-
 
 
     private unsafe struct IDropTarget

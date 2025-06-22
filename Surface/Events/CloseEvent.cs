@@ -9,8 +9,4 @@ namespace Prowl.Surface.Events;
 /// </summary>
 public record CloseEvent() : WindowEvent(WindowEventKind.Close)
 {
-    /// <summary>
-    /// Gets or sets a boolean indicating that the close event should be cancelled. Default is <c>false</c>.
-    /// </summary>
-    public bool Cancel { get; set; }
 }

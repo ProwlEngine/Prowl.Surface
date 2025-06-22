@@ -10,73 +10,31 @@ using Prowl.Surface.Platforms;
 using Prowl.Surface.Platforms.Wayland;
 using Prowl.Surface.Platforms.Win32;
 using Prowl.Surface.Platforms.X11;
-using Prowl.Surface.Threading;
 
 namespace Prowl.Surface;
 
 /// <summary>
 /// The Window class associated with a native Window.
 /// </summary>
-public abstract class Window : DispatcherObject, INativeWindow
+public abstract class Window : INativeWindow
 {
-    // The following events are cached per Window to avoid allocations
-    // ReSharper disable InconsistentNaming
-    internal readonly CloseEvent _closeEvent;
-    internal readonly FrameEvent _frameEvent;
-    internal readonly HitTestEvent _hitTestEvent;
-    internal readonly KeyboardEvent _keyboardEvent;
-    internal readonly MouseEvent _mouseEvent;
-    internal readonly PaintEvent _paintEvent;
-    internal readonly TextEvent _textEvent;
-    // ReSharper restore InconsistentNaming
-
-    internal Window(WindowCreateOptions options)
-    {
-        Events = options.Events;
-        _closeEvent = new CloseEvent();
-        _frameEvent = new FrameEvent();
-        _hitTestEvent = new HitTestEvent();
-        _keyboardEvent = new KeyboardEvent();
-        _mouseEvent = new MouseEvent();
-        _paintEvent = new PaintEvent();
-        _textEvent = new TextEvent();
-    }
-
-    /// <summary>
-    /// Gets the hub for the events attached to this Window.
-    /// </summary>
-    public WindowEventHub Events { get; }
-
     /// <summary>
     /// Gets the native handle associated to this window. This is platform dependent (see remarks).
     /// </summary>
     /// <remarks>
     /// - On Windows: This handle is a HWND.
     /// </remarks>
-    public IntPtr Handle { get; protected set; }
+    public abstract IntPtr Handle { get; protected set; }
 
     /// <summary>
     /// Gets the kind of this window.
     /// </summary>
-    public WindowKind Kind { get; protected set; }
+    public abstract WindowKind Kind { get; protected set; }
 
     /// <summary>
     /// Gets or sets a boolean indicating if the window has default decorations (title caption, resize grips, minimize/maximize/close buttons).
     /// </summary>
     public abstract bool Decorations { get; set; }
-
-    /// <summary>
-    /// Gets or sets the DPI associated to this window.
-    /// </summary>
-    /// <remarks>
-    /// In order to manually override the system DPI, you must set the <see cref="DpiMode"/> to manual.
-    /// </remarks>
-    public abstract Dpi Dpi { get; set; }
-
-    /// <summary>
-    /// Gets or sets the DPI mode. Default is auto (in sync with the OS).
-    /// </summary>
-    public abstract DpiMode DpiMode { get; set; }
 
     /// <summary>
     /// Gets or sets the background color.
@@ -101,12 +59,7 @@ public abstract class Window : DispatcherObject, INativeWindow
     /// <summary>
     /// Gets or sets the size of this window. The size is in logical value according to the <see cref="Dpi"/> of this window.
     /// </summary>
-    public abstract SizeF Size { get; set; }
-
-    /// <summary>
-    /// Gets the size in pixels of this window.
-    /// </summary>
-    public Size SizeInPixels => Dpi.LogicalToPixel(Size);
+    public abstract Size Size { get; set; }
 
     /// <summary>
     /// Gets or sets the logical client size (without the decorations).
@@ -114,7 +67,7 @@ public abstract class Window : DispatcherObject, INativeWindow
     /// <remarks>
     /// If the window does not have decoration, the client size is equal to the <see cref="Size"/> of this window.
     /// </remarks>
-    public abstract SizeF ClientSize { get; set; }
+    public abstract Size ClientSize { get; set; }
 
     /// <summary>
     /// Gets or sets the virtual position in pixels of this window.
@@ -250,36 +203,6 @@ public abstract class Window : DispatcherObject, INativeWindow
     public abstract void SetIcon(Icon icon);
 
     /// <summary>
-    /// Show this window as a dialog.
-    /// </summary>
-    /// <remarks>>
-    /// The window must be a <see cref="WindowKind.Popup"/> window.
-    /// </remarks>
-    public void ShowDialog()
-    {
-        VerifyAccess();
-        VerifyPopup();
-
-        Visible = true;
-        var frame = new ModalFrame(Dispatcher, this);
-        WindowEventHub.FrameEventHandler destroyFrame = (Window window, FrameEvent evt) =>
-        {
-            frame.Continue = evt.ChangeKind != FrameChangeKind.Destroyed;
-        };
-
-        Events.Frame += destroyFrame;
-        try
-        {
-            // Block until this window is closed
-            Dispatcher.PushFrame(frame);
-        }
-        finally
-        {
-            Events.Frame -= destroyFrame;
-        }
-    }
-
-    /// <summary>
     /// Creates a window with the specified options.
     /// </summary>
     /// <param name="options">The options of the window.</param>
@@ -317,47 +240,14 @@ public abstract class Window : DispatcherObject, INativeWindow
         if (Kind != WindowKind.TopLevel) throw new InvalidOperationException("Window is not a TopLevel. Expecting the window to be a TopLevel for this operation.");
     }
 
-    internal void VerifyNotChild()
-    {
-        if (Kind == WindowKind.Win32Child) throw new InvalidOperationException("Cannot perform this operation on a child window.");
-    }
-
-    internal void VerifyAccessAndNotDestroyed()
-    {
-        VerifyAccess();
-        if (IsDisposed)
-        {
-            throw new InvalidOperationException("This window has been closed and destroyed.");
-        }
-    }
-
-    internal void OnWindowEvent(WindowEvent evt)
-    {
-        Events.OnWindowEvent(this, evt);
-    }
-
-    internal void OnFrameEvent(FrameChangeKind frameChangeKind)
-    {
-        _frameEvent.ChangeKind = frameChangeKind;
-        OnWindowEvent(_frameEvent);
-    }
-    internal bool OnPaintEvent(in RectangleF bounds)
-    {
-        _paintEvent.Handled = false;
-        _paintEvent.Bounds = bounds;
-        OnWindowEvent(_paintEvent);
-        return _paintEvent.Handled;
-    }
-
     internal void CenterPositionFromBounds(Rectangle bounds)
     {
         var position = bounds.Location;
         var size = bounds.Size;
 
-        var currentSize = Dpi.LogicalToPixel(Size);
+        var currentSize = Size;
         if (currentSize.IsEmpty) return;
 
-        var dpi = Dpi;
         bool changed = false;
         var currentPosition = Position;
         if (currentSize.Width <= size.Width)
@@ -378,23 +268,10 @@ public abstract class Window : DispatcherObject, INativeWindow
         }
     }
 
-    private sealed class ModalFrame : DispatcherFrame
-    {
-        private readonly Window _window;
-
-        public ModalFrame(Dispatcher dispatcher, Window window) : base(dispatcher, false)
-        {
-            _window = window;
-        }
-
-        protected override void Enter()
-        {
-            _window.Modal = true;
-        }
-
-        protected override void Leave()
-        {
-            // The Window has been destroyed if we leave, so we don't need to modify the modal of the parent
-        }
-    }
+    /// <summary>
+    /// Indicates if there is a pending event that needs to get processed, and returns a <see cref="WindowEvent"/> with window event information.
+    /// </summary>
+    /// <param name="ev">Event information.</param>
+    /// <returns>True if an event is avaliable, false otherwise.</returns>
+    public static bool PollEvent(out WindowEvent ev) => PlatformImpl.EventHandler.PollEvent(out ev);
 }

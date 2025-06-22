@@ -18,9 +18,4 @@ public enum WindowKind
     /// A popup window.
     /// </summary>
     Popup,
-
-    /// <summary>
-    /// A Win32 child window. This is only valid for the Windows platform.
-    /// </summary>
-    Win32Child
 }

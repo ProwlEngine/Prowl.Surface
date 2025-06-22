@@ -14,7 +14,6 @@ internal unsafe static class XUtility
     internal static Atom WmProtocols = Xlib.XInternAtom(X11Globals.Display, "WM_PROTOCOLS", false);
     internal static Atom WmWindowOpacity = Xlib.XInternAtom(X11Globals.Display, "_NET_WM_WINDOW_OPACITY", false);
     internal static Atom WmIcon = Xlib.XInternAtom(X11Globals.Display, "_NET_WM_ICON", true);
-    internal static Atom AppShutdown = Xlib.XInternAtom(X11Globals.Display, "Surface.Shutdown", false);
 
 
     internal static XEventMask GeneralMask =

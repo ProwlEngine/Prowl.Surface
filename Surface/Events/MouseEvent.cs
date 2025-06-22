@@ -24,11 +24,6 @@ public record MouseEvent() : WindowEvent(WindowEventKind.Mouse)
     public MouseButton Button { get; set; }
 
     /// <summary>
-    /// Gets the currently pressed mouse buttons.
-    /// </summary>
-    public MouseButtonFlags Pressed { get; set; }
-
-    /// <summary>
     /// Gets the logical position within the client area of the window.
     /// </summary>
     public PointF Position;

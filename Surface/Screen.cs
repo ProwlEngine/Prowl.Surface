@@ -5,14 +5,12 @@
 using System;
 using System.Drawing;
 
-using Prowl.Surface.Threading;
-
 namespace Prowl.Surface;
 
 /// <summary>
 /// Describes a screen with its properties (width, height...).
 /// </summary>
-public abstract class Screen : DispatcherObject
+public abstract class Screen
 {
     internal Screen()
     {
@@ -21,17 +19,17 @@ public abstract class Screen : DispatcherObject
     /// <summary>
     /// Gets the default virtual screen position.
     /// </summary>
-    public static Point VirtualPosition => Dispatcher.Current.ScreenManager.GetVirtualScreenPosition();
+    public static Point VirtualPosition => PlatformImpl.ScreenManager.GetVirtualScreenPosition();
 
     /// <summary>
     /// Gets the size in pixel of the virtual screen.
     /// </summary>
-    public static Size VirtualSizeInPixels => Dispatcher.Current.ScreenManager.GetVirtualScreenSizeInPixels();
+    public static Size VirtualSizeInPixels => PlatformImpl.ScreenManager.GetVirtualScreenSizeInPixels();
 
     /// <summary>
     /// Gets the primary screen. Might be null.
     /// </summary>
-    public static Screen? Primary => Dispatcher.Current.ScreenManager.GetPrimaryScreen();
+    public static Screen? Primary => PlatformImpl.ScreenManager.GetPrimaryScreen();
 
     /// <summary>
     /// Gets the primary DPI or a default DPI if no Primary screens are attached.
@@ -51,7 +49,7 @@ public abstract class Screen : DispatcherObject
     /// <summary>
     /// Gets the list of all active screens.
     /// </summary>
-    public static ReadOnlySpan<Screen> List => Dispatcher.Current.ScreenManager.GetAllScreens();
+    public static ReadOnlySpan<Screen> List => PlatformImpl.ScreenManager.GetAllScreens();
 
     /// <summary>
     /// Gets a boolean indicating if this instance is valid.

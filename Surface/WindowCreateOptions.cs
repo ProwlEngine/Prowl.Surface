@@ -115,11 +115,6 @@ public sealed record WindowCreateOptions
     public bool DragDrop { get; init; } = false;
 
     /// <summary>
-    /// Sets the window event delegate that will receive events.
-    /// </summary>
-    public WindowEventHub Events { get; init; } = new WindowEventHub();
-
-    /// <summary>
     /// Sets the window start position (default, center parent, center screen)
     /// </summary>
     public WindowStartPosition StartPosition { get; init; } = WindowStartPosition.Default;
@@ -152,7 +147,7 @@ public sealed record WindowCreateOptions
     /// </summary>
     public void Verify()
     {
-        if ((Kind == WindowKind.Popup || Kind == WindowKind.Win32Child) && Parent is null)
+        if ((Kind == WindowKind.Popup) && Parent is null)
         {
             throw new InvalidOperationException("Invalid options. A non TopLevel window must have a Parent window.");
         }
