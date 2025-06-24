@@ -5,21 +5,6 @@ using Prowl.Surface;
 using Prowl.Surface.Events;
 using Prowl.Surface.Input;
 
-CircularBuffer<int> testBuffer = new CircularBuffer<int>(5);
-
-testBuffer.Enqueue(1);
-testBuffer.Enqueue(2);
-testBuffer.Enqueue(3);
-testBuffer.Enqueue(4);
-testBuffer.Enqueue(5);
-testBuffer.Enqueue(6);
-
-testBuffer.TryDequeue(out int v);
-testBuffer.TryDequeue(out v);
-testBuffer.TryDequeue(out v);
-testBuffer.TryDequeue(out v);
-testBuffer.TryDequeue(out v);
-
 Icon icon = new Icon(2, 2);
 
 icon.Buffer[0] = new Rgba32(255, 255, 255, 255);

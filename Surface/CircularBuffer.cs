@@ -5,7 +5,7 @@ namespace Prowl.Surface;
 
 
 // from https://stackoverflow.com/a/5924776
-public class CircularBuffer<T>
+internal class CircularBuffer<T>
 {
     private readonly int _size;
     private readonly object _lock;
