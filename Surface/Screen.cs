@@ -12,6 +12,9 @@ namespace Prowl.Surface;
 /// </summary>
 public abstract class Screen
 {
+    private static ScreenManager Manager => Platform.PlatformImpl.ScreenManager;
+
+
     internal Screen()
     {
     }
@@ -19,17 +22,17 @@ public abstract class Screen
     /// <summary>
     /// Gets the default virtual screen position.
     /// </summary>
-    public static Point VirtualPosition => PlatformImpl.ScreenManager.GetVirtualScreenPosition();
+    public static Point VirtualPosition => Manager.GetVirtualScreenPosition();
 
     /// <summary>
     /// Gets the size in pixel of the virtual screen.
     /// </summary>
-    public static Size VirtualSizeInPixels => PlatformImpl.ScreenManager.GetVirtualScreenSizeInPixels();
+    public static Size VirtualSizeInPixels => Manager.GetVirtualScreenSizeInPixels();
 
     /// <summary>
     /// Gets the primary screen. Might be null.
     /// </summary>
-    public static Screen? Primary => PlatformImpl.ScreenManager.GetPrimaryScreen();
+    public static Screen? Primary => Manager.GetPrimaryScreen();
 
     /// <summary>
     /// Gets the primary DPI or a default DPI if no Primary screens are attached.
@@ -49,7 +52,7 @@ public abstract class Screen
     /// <summary>
     /// Gets the list of all active screens.
     /// </summary>
-    public static ReadOnlySpan<Screen> List => PlatformImpl.ScreenManager.GetAllScreens();
+    public static ReadOnlySpan<Screen> List => Manager.GetAllScreens();
 
     /// <summary>
     /// Gets a boolean indicating if this instance is valid.

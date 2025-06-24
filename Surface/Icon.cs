@@ -5,11 +5,6 @@
 using System;
 using System.Drawing;
 
-using Prowl.Surface.Platforms;
-using Prowl.Surface.Platforms.Wayland;
-using Prowl.Surface.Platforms.Win32;
-using Prowl.Surface.Platforms.X11;
-
 namespace Prowl.Surface;
 
 /// <summary>
@@ -17,7 +12,7 @@ namespace Prowl.Surface;
 /// </summary>
 public sealed class Icon
 {
-    private static readonly IconImpl IconImpl = CreateIconImpl();
+    private static IconImpl IconImpl => Platform.PlatformImpl.IconImpl;
 
     private readonly Rgba32[] _buffer;
 
@@ -78,19 +73,4 @@ public sealed class Icon
     /// </summary>
     /// <returns></returns>
     public static Icon GetApplicationIcon() => IconImpl.GetApplicationIcon();
-
-    private static IconImpl CreateIconImpl()
-    {
-        switch (WindowPlatform.GetBestPlatform())
-        {
-            case PlatformType.Win32:
-                return new Win32Icon();
-            case PlatformType.Wayland:
-                return new WaylandIcon();
-            case PlatformType.X11:
-                return new X11Icon();
-        }
-
-        throw new PlatformNotSupportedException();
-    }
 }

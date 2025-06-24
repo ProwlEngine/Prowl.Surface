@@ -18,4 +18,9 @@ public abstract record WindowEvent
     /// Gets the kind of this event.
     /// </summary>
     public WindowEventKind Kind { get; }
+
+    /// <summary>
+    /// Gets the window this event belongs to.
+    /// </summary>
+    public Window? Window { get; internal set; }
 }

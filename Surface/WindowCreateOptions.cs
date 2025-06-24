@@ -18,11 +18,6 @@ public sealed record WindowCreateOptions
     public WindowKind Kind { get; init; } = WindowKind.TopLevel;
 
     /// <summary>
-    /// Sets the desired background color for the window. Default is system dependent.
-    /// </summary>
-    public Color? BackgroundColor { get; init; } = null;
-
-    /// <summary>
     /// Sets a desired default position for the window.
     /// </summary>
     /// <remarks>
@@ -55,11 +50,6 @@ public sealed record WindowCreateOptions
     public SizeF? MaximumSize { get; init; } = null;
 
     /// <summary>
-    /// Sets whether the window is resizable or not. Default is <c>true</c>.
-    /// </summary>
-    public bool Resizable { get; init; } = true;
-
-    /// <summary>
     /// Sets the initial title of the window in the title bar. The default is "Surface Window".
     /// </summary>
     public string Title { get; init; } = "Surface Window";
@@ -75,9 +65,14 @@ public sealed record WindowCreateOptions
     public bool Visible { get; init; } = true;
 
     /// <summary>
-    /// Sets whether the background of the window should be transparent. Default is <c>false</c>.
+    /// Sets whether the window input should be enabled upon creation. Default is <c>true</c>
     /// </summary>
-    public bool Transparent { get; init; } = false;
+    public bool Enabled { get; init; } = true;
+
+    /// <summary>
+    /// Sets how transparent the background of the window is. Default is fully opaque <c>1</c>.
+    /// </summary>
+    public float Opacity { get; init; } = 1;
 
     /// <summary>
     /// Sets whether the window should have a border, a title bar, etc. Default is <c>true</c>.
@@ -87,12 +82,7 @@ public sealed record WindowCreateOptions
     /// <summary>
     /// Sets whether the window can be maximizable. Default is <c>true</c>.
     /// </summary>
-    public bool Maximizable { get; init; } = true;
-
-    /// <summary>
-    /// Sets whether the window can be minimizable. Default is <c>true</c>.
-    /// </summary>
-    public bool Minimizable { get; init; } = true;
+    public WindowCapabilities Capabilities { get; init; } = WindowCapabilities.All;
 
     /// <summary>
     /// Sets the icon of the window. The default is the default application icon.
@@ -102,7 +92,7 @@ public sealed record WindowCreateOptions
     /// <summary>
     /// Sets the native parent window handle. Required for a popup window.
     /// </summary>
-    public INativeWindow? Parent { get; init; } = null;
+    public Window? Parent { get; init; } = null;
 
     /// <summary>
     /// Only valid for a top level window, the window will be shown in the task bar when created. Default is <c>true</c>.
@@ -118,29 +108,6 @@ public sealed record WindowCreateOptions
     /// Sets the window start position (default, center parent, center screen)
     /// </summary>
     public WindowStartPosition StartPosition { get; init; } = WindowStartPosition.Default;
-
-    /// <summary>
-    /// Sets the factor relative to the screen size if the size is not specified. Default is <c>0.6f</c>.
-    /// </summary>
-    /// <remarks>
-    /// Maximum is 1.0f, minimum factor is 0.1f.
-    /// </remarks>
-    public PointF DefaultSizeFactor { get; init; } = new PointF(0.6f, 0.6f);
-
-    /// <summary>
-    /// Sets whether the window support the composition engine provided by the OS. Default is <c>false</c>
-    /// </summary>
-    public bool EnableComposition { get; init; } = false;
-
-    /// <summary>
-    /// Sets the DPI value used by the Window at creation time if <see cref="DpiMode"/> is set to <see cref="DpiMode.Auto"/>. Default is Dpi(96, 96).
-    /// </summary>
-    public Dpi ManualDpi { get; init; } = Dpi.Default;
-
-    /// <summary>
-    /// Sets the DPI mode used by the Window at creation time. Default is <see cref="DpiMode.Auto"/>.
-    /// </summary>
-    public DpiMode DpiMode { get; init; } = DpiMode.Auto;
 
     /// <summary>
     /// Verify options and throw an exception if an invalid setup is provided.

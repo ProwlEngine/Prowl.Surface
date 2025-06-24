@@ -2,13 +2,6 @@
 // Licensed under the BSD-Clause 2 license.
 // See license.txt file in the project root for full license information.
 
-using System;
-
-using Prowl.Surface.Platforms;
-using Prowl.Surface.Platforms.Wayland;
-using Prowl.Surface.Platforms.Win32;
-using Prowl.Surface.Platforms.X11;
-
 // ReSharper disable InconsistentNaming
 
 namespace Prowl.Surface.Input;
@@ -18,7 +11,7 @@ namespace Prowl.Surface.Input;
 /// </summary>
 public sealed class Cursor
 {
-    private static readonly CursorImpl Impl = GetCursorManager();
+    private static CursorImpl Impl = Platform.PlatformImpl.CursorImpl;
 
     internal Cursor(CursorType cursorType, nint handle)
     {
@@ -131,19 +124,4 @@ public sealed class Cursor
     /// <returns></returns>
     /// TODO: Not implemented yet.
     private static Cursor LoadFromImage(string fileName) => Impl.LoadFromFile(fileName);
-
-    private static CursorImpl GetCursorManager()
-    {
-        switch (WindowPlatform.GetBestPlatform())
-        {
-            case PlatformType.Win32:
-                return new Win32Cursor();
-            case PlatformType.Wayland:
-                return new WaylandCursor();
-            case PlatformType.X11:
-                return new X11Cursor();
-        }
-
-        throw new PlatformNotSupportedException();
-    }
 }

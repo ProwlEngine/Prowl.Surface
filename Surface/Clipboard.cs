@@ -6,11 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Prowl.Surface.Platforms;
-using Prowl.Surface.Platforms.Wayland;
-using Prowl.Surface.Platforms.Win32;
-using Prowl.Surface.Platforms.X11;
-
 namespace Prowl.Surface;
 
 /// <summary>
@@ -18,7 +13,7 @@ namespace Prowl.Surface;
 /// </summary>
 public static class Clipboard
 {
-    private static readonly ClipboardImpl Manager = GetClipboardImpl();
+    private static ClipboardImpl Manager => Platform.PlatformImpl.ClipboardImpl;
 
     /// <summary>
     /// Clears the clipboard.
@@ -76,21 +71,6 @@ public static class Clipboard
     /// </summary>
     /// <param name="dataMap">The <see cref="ClipboardData"/> to set.</param>
     public static void SetData(ClipboardData dataMap) => Manager.SetData(dataMap);
-
-    private static ClipboardImpl GetClipboardImpl()
-    {
-        switch (WindowPlatform.GetBestPlatform())
-        {
-            case PlatformType.Win32:
-                return new Win32Clipboard();
-            case PlatformType.Wayland:
-                return new WaylandClipboard();
-            case PlatformType.X11:
-                return new X11Clipboard();
-        }
-
-        throw new PlatformNotSupportedException();
-    }
 
     private static IDataFormatSerializer<T> DefaultSerializer<T>() where T : class
     {

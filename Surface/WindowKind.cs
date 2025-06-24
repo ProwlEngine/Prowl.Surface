@@ -18,4 +18,9 @@ public enum WindowKind
     /// A popup window.
     /// </summary>
     Popup,
+
+    /// <summary>
+    /// A child window of another window.
+    /// </summary>
+    Child,
 }

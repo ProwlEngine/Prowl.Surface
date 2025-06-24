@@ -5,7 +5,7 @@ using System;
 namespace Prowl.Surface.Platforms;
 
 
-public enum PlatformType
+internal enum PlatformType
 {
     Win32, // Windows
     Wayland, // Linux wayland compositor
@@ -17,7 +17,7 @@ public enum PlatformType
 }
 
 
-public static class WindowPlatform
+internal static class WindowPlatform
 {
     public static PlatformType GetBestPlatform()
     {

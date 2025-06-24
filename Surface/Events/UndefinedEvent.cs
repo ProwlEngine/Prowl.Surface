@@ -7,6 +7,6 @@ namespace Prowl.Surface.Events;
 /// <summary>
 /// This close event is triggered when a window requests to be closed. It can be used to cancel the closing event.
 /// </summary>
-public record CloseEvent() : WindowEvent(WindowEventKind.Close)
+public record UndefinedEvent() : WindowEvent(WindowEventKind.Undefined)
 {
 }

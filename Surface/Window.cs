@@ -6,10 +6,6 @@ using System;
 using System.Drawing;
 
 using Prowl.Surface.Events;
-using Prowl.Surface.Platforms;
-using Prowl.Surface.Platforms.Wayland;
-using Prowl.Surface.Platforms.Win32;
-using Prowl.Surface.Platforms.X11;
 
 namespace Prowl.Surface;
 
@@ -18,13 +14,28 @@ namespace Prowl.Surface;
 /// </summary>
 public abstract class Window : INativeWindow
 {
+    internal Window(WindowCreateOptions options)
+    {
+        if (options.Kind != WindowKind.TopLevel && options.Parent == null)
+            throw new InvalidOperationException("Attempted to create a non-top level window without a parent");
+
+        Parent = options.Parent;
+    }
+
     /// <summary>
     /// Gets the native handle associated to this window. This is platform dependent (see remarks).
     /// </summary>
     /// <remarks>
-    /// - On Windows: This handle is a HWND.
+    /// <list type="bullet">
+    /// <item>
+    /// <description>On Windows: This handle is a HWND.</description>
+    /// </item>
+    /// <item>
+    /// <description>On Linux/Gdk: This handle is a Gdk Surface</description>
+    /// </item>
+    /// </list>
     /// </remarks>
-    public abstract IntPtr Handle { get; protected set; }
+    public abstract IntPtr Handle { get; }
 
     /// <summary>
     /// Gets the kind of this window.
@@ -37,14 +48,22 @@ public abstract class Window : INativeWindow
     public abstract bool Decorations { get; set; }
 
     /// <summary>
-    /// Gets or sets the background color.
+    /// Gets or sets the DPI associated to this window.
     /// </summary>
-    public abstract Color BackgroundColor { get; set; }
+    /// <remarks>
+    /// In order to manually override the system DPI, you must set the <see cref="DpiMode"/> to manual.
+    /// </remarks>
+    public abstract Dpi Dpi { get; set; }
+
+    /// <summary>
+    /// Gets or sets the DPI mode. Default is auto (in sync with the OS).
+    /// </summary>
+    public abstract DpiMode DpiMode { get; set; }
 
     /// <summary>
     /// Gets or sets a boolean indicating that this window is enabled or disabled.
     /// </summary>
-    public abstract bool Enable { get; set; }
+    public abstract bool Enabled { get; set; }
 
     /// <summary>
     /// Gets a boolean indicating that this Windows has been disposed.
@@ -59,7 +78,12 @@ public abstract class Window : INativeWindow
     /// <summary>
     /// Gets or sets the size of this window. The size is in logical value according to the <see cref="Dpi"/> of this window.
     /// </summary>
-    public abstract Size Size { get; set; }
+    public abstract SizeF Size { get; set; }
+
+    /// <summary>
+    /// Gets the size in pixels of this window.
+    /// </summary>
+    public Size SizeInPixels => Dpi.LogicalToPixel(Size);
 
     /// <summary>
     /// Gets or sets the logical client size (without the decorations).
@@ -67,7 +91,7 @@ public abstract class Window : INativeWindow
     /// <remarks>
     /// If the window does not have decoration, the client size is equal to the <see cref="Size"/> of this window.
     /// </remarks>
-    public abstract Size ClientSize { get; set; }
+    public abstract SizeF ClientSize { get; set; }
 
     /// <summary>
     /// Gets or sets the virtual position in pixels of this window.
@@ -85,24 +109,14 @@ public abstract class Window : INativeWindow
     public abstract bool DragDrop { get; set; }
 
     /// <summary>
-    /// Gets or sets a boolean indicating if this window can be resized.
+    /// Gets or sets a flags enum determining what the user can do to the window.
     /// </summary>
-    public abstract bool Resizeable { get; set; }
+    public abstract WindowCapabilities Capabilities { get; set; }
 
     /// <summary>
-    /// Gets or sets a boolean indicating if this window can be maximized.
+    /// Gets the parent window. Is null if <see cref="Kind"/> is <see cref="WindowKind.TopLevel"/>.
     /// </summary>
-    public abstract bool Maximizeable { get; set; }
-
-    /// <summary>
-    /// Gets or sets a boolean indicating if this window can be minimized.
-    /// </summary>
-    public abstract bool Minimizeable { get; set; }
-
-    /// <summary>
-    /// Gets the parent window. Is not null if <see cref="Kind"/> is <see cref="WindowKind.TopLevel"/>.
-    /// </summary>
-    public abstract INativeWindow? Parent { get; }
+    public Window? Parent { get; set; }
 
     /// <summary>
     /// Gets or sets the state of the window (normal, minimized, maximized, fullscreen).
@@ -130,25 +144,20 @@ public abstract class Window : INativeWindow
     public abstract void Focus();
 
     /// <summary>
-    /// Activates this window.
-    /// </summary>
-    public abstract void Activate();
-
-    /// <summary>
     /// Closes this window.
     /// </summary>
     /// <returns>If the window was successfully closed.</returns>
     public abstract bool Close();
 
     /// <summary>
-    /// Gets or sets the logical maximum size of this window.
+    /// Gets or sets the maximum size of this window.
     /// </summary>
-    public abstract SizeF MinimumSize { get; set; }
+    public abstract Size MinimumSize { get; set; }
 
     /// <summary>
-    /// Gets or sets the logical minimum size of this window.
+    /// Gets or sets the minimum size of this window.
     /// </summary>
-    public abstract SizeF MaximumSize { get; set; }
+    public abstract Size MaximumSize { get; set; }
 
     /// <summary>
     /// Gets or sets a boolean indicating if this window is modal or not.
@@ -159,20 +168,6 @@ public abstract class Window : INativeWindow
     /// Gets or sets a boolean indicating if the icon of window is visible on the task bar.
     /// </summary>
     public abstract bool ShowInTaskBar { get; set; }
-
-    /// <summary>
-    /// Converts a screen position to a position within the client area of the window.
-    /// </summary>
-    /// <param name="position">A screen position.</param>
-    /// <returns>A logical position in the client area.</returns>
-    public abstract PointF ScreenToClient(Point position);
-
-    /// <summary>
-    /// Converts a logical position in the client area to a pixel position on the screen.
-    /// </summary>
-    /// <param name="position">A logical position in the client area.</param>
-    /// <returns>The equivalent screen position.</returns>
-    public abstract Point ClientToScreen(PointF position);
 
     /// <summary>
     /// Gets the associated screen with this window.
@@ -202,27 +197,9 @@ public abstract class Window : INativeWindow
     /// <param name="icon">The icon to set.</param>
     public abstract void SetIcon(Icon icon);
 
-    /// <summary>
-    /// Creates a window with the specified options.
-    /// </summary>
-    /// <param name="options">The options of the window.</param>
-    /// <returns>The window created.</returns>
-    /// <exception cref="PlatformNotSupportedException">If the platform is not supported.</exception>
-    public static Window Create(WindowCreateOptions options)
+    internal void VerifyNotDisposed()
     {
-        options.Verify();
-
-        switch (WindowPlatform.GetBestPlatform())
-        {
-            case PlatformType.Win32:
-                return new Win32Window(options);
-            case PlatformType.Wayland:
-                return new WaylandWindow(options);
-            case PlatformType.X11:
-                return new X11Window(options);
-        }
-
-        throw new PlatformNotSupportedException();
+        if (IsDisposed) throw new InvalidOperationException("Window has been disposed or closed.");
     }
 
     internal void VerifyPopup()
@@ -230,14 +207,15 @@ public abstract class Window : INativeWindow
         if (Kind != WindowKind.Popup) throw new InvalidOperationException("Window is not a Popup. Expecting the window to be a Popup for this operation.");
     }
 
-    internal void VerifyResizeable()
-    {
-        if (!Resizeable) throw new InvalidOperationException("Window is not resizable");
-    }
-
     internal void VerifyTopLevel()
     {
         if (Kind != WindowKind.TopLevel) throw new InvalidOperationException("Window is not a TopLevel. Expecting the window to be a TopLevel for this operation.");
+    }
+
+    internal void VerifyNeedsParent()
+    {
+        if (Parent == null && Kind != WindowKind.TopLevel)
+            throw new InvalidOperationException("Parent is required to create a non-top level window.");
     }
 
     internal void CenterPositionFromBounds(Rectangle bounds)
@@ -245,9 +223,10 @@ public abstract class Window : INativeWindow
         var position = bounds.Location;
         var size = bounds.Size;
 
-        var currentSize = Size;
+        var currentSize = Dpi.LogicalToPixel(Size);
         if (currentSize.IsEmpty) return;
 
+        var dpi = Dpi;
         bool changed = false;
         var currentPosition = Position;
         if (currentSize.Width <= size.Width)
@@ -267,11 +246,4 @@ public abstract class Window : INativeWindow
             Position = currentPosition;
         }
     }
-
-    /// <summary>
-    /// Indicates if there is a pending event that needs to get processed, and returns a <see cref="WindowEvent"/> with window event information.
-    /// </summary>
-    /// <param name="ev">Event information.</param>
-    /// <returns>True if an event is avaliable, false otherwise.</returns>
-    public static bool PollEvent(out WindowEvent ev) => PlatformImpl.EventHandler.PollEvent(out ev);
 }
