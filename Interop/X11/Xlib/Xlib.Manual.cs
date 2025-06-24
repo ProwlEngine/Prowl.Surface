@@ -53,7 +53,7 @@ public static unsafe partial class Xlib
 
     public static int VendorRelease(XDisplay* dpy) => dpy->release;
 
-    public static string DisplayString(XDisplay* dpy) => Marshal.PtrToStringAnsi((nint)dpy->display_name);
+    public static string? DisplayString(XDisplay* dpy) => Marshal.PtrToStringAnsi((nint)dpy->display_name);
 
     public static int DefaultDepth(XDisplay* dpy, int scr) => ScreenOfDisplay(dpy, scr)->root_depth;
 

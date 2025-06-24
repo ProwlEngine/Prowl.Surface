@@ -546,13 +546,13 @@ public static unsafe partial class Xlib
     public static partial int XGetScreenSaver(XDisplay* display, int* param1, int* param2, int* param3, int* param4);
 
     [LibraryImport("libX11")]
-    public static partial int XGetTransientForHint(XDisplay* display, XWindow window, XWindow* param2);
+    public static partial int XGetTransientForHint(XDisplay* display, XWindow window, out XWindow outWindow);
 
     [LibraryImport("libX11")]
     public static partial int XGetWindowProperty(XDisplay* display, XWindow window, Atom property, long offset, long length, [MarshalAs(UnmanagedType.Bool)] bool delete, Atom req_type, out Atom actual_type, out int actual_format, out ulong nitems, out ulong bytes_after, out byte* data);
 
     [LibraryImport("libX11")]
-    public static partial int XGetWindowAttributes(XDisplay* display, XWindow window, XWindowAttributes* param2);
+    public static partial int XGetWindowAttributes(XDisplay* display, XWindow window, out XWindowAttributes param2);
 
     [LibraryImport("libX11")]
     public static partial int XGrabButton(XDisplay* display, uint param1, uint param2, XWindow param3, int param4, uint param5, int param6, int param7, XWindow param8, XCursor param9);
@@ -736,7 +736,7 @@ public static unsafe partial class Xlib
     public static partial int XSelectInput(XDisplay* display, XWindow window, XEventMask eventMask);
 
     [LibraryImport("libX11")]
-    public static partial int XSendEvent(XDisplay* display, XWindow window, [MarshalAs(UnmanagedType.Bool)] bool propagate, long eventmask, XEvent* param4);
+    public static partial int XSendEvent(XDisplay* display, XWindow window, [MarshalAs(UnmanagedType.Bool)] bool propagate, XEventMask eventmask, XEvent* param4);
 
     [LibraryImport("libX11")]
     public static partial int XSetAccessControl(XDisplay* display, int param1);
@@ -805,7 +805,7 @@ public static unsafe partial class Xlib
     public static partial int XSync(XDisplay* display, int param1);
 
     [LibraryImport("libX11")]
-    public static partial int XTranslateCoordinates(XDisplay* display, XWindow window, XWindow param2, int param3, int param4, int* param5, int* param6, XWindow* param7);
+    public static partial int XTranslateCoordinates(XDisplay* display, XWindow window, XWindow destWindow, int srcX, int srcY, out int resX, out int resY, out XWindow childReturn);
 
     [LibraryImport("libX11")]
     public static partial int XUndefineCursor(XDisplay* display, XWindow window);

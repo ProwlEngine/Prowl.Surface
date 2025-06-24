@@ -31,10 +31,8 @@ public unsafe partial struct XWindowAttributes
 
     public int backing_store;
 
-    [NativeTypeName("unsigned long")]
     public nuint backing_planes;
 
-    [NativeTypeName("unsigned long")]
     public nuint backing_pixel;
 
     public int save_under;
@@ -45,11 +43,9 @@ public unsafe partial struct XWindowAttributes
 
     public int map_state;
 
-    [NativeTypeName("long")]
-    public nint all_event_masks;
+    public XEventMask all_event_masks;
 
-    [NativeTypeName("long")]
-    public nint your_event_mask;
+    public XEventMask your_event_mask;
 
     [NativeTypeName("long")]
     public nint do_not_propagate_mask;
