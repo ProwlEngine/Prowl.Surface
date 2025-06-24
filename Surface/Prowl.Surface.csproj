@@ -4,7 +4,7 @@
     <OutputType>Library</OutputType>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>8500</NoWarn> <!-- Takes the address of a managed type -->
+    <NoWarn>8500,CA1416</NoWarn> <!-- Takes the address of a managed type -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
@@ -32,7 +32,7 @@
     <ProjectReference Include="../Interop/X11/TerraFX.Interop.Xlib.csproj"/>
   </ItemGroup>
 
-  <PropertyGroup>
+  <!-- <PropertyGroup>
     <WaylandBindingsProjectPath>../Interop/Wayland/WaylandProtocol.csproj</WaylandBindingsProjectPath>
     <WaylandBindingsOutputPath>../Interop/Wayland/bin/$(Configuration)/net9.0/</WaylandBindingsOutputPath>
     <WaylandBindingsDllName>WaylandProtocol.dll</WaylandBindingsDllName>
@@ -47,5 +47,5 @@
       <HintPath>$(WaylandBindingsOutputPath)$(WaylandBindingsDllName)</HintPath>
       <Private>true</Private>
     </Reference>
-  </ItemGroup>
+  </ItemGroup> -->
 </Project>
