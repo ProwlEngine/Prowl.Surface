@@ -5,15 +5,17 @@ using Prowl.Surface.Input;
 
 using TerraFX.Interop.Xlib;
 
+using static Prowl.Surface.Platforms.X11.X11PlatformImpl;
+
 namespace Prowl.Surface.Platforms.X11;
 
 
 internal unsafe static class XUtility
 {
-    internal static Atom WmDeleteWindow = Xlib.XInternAtom(X11Globals.Display, "WM_DELETE_WINDOW", false);
-    internal static Atom WmProtocols = Xlib.XInternAtom(X11Globals.Display, "WM_PROTOCOLS", false);
-    internal static Atom WmWindowOpacity = Xlib.XInternAtom(X11Globals.Display, "_NET_WM_WINDOW_OPACITY", false);
-    internal static Atom WmIcon = Xlib.XInternAtom(X11Globals.Display, "_NET_WM_ICON", true);
+    internal static Atom WmDeleteWindow = Xlib.XInternAtom(Display, "WM_DELETE_WINDOW", false);
+    internal static Atom WmProtocols = Xlib.XInternAtom(Display, "WM_PROTOCOLS", false);
+
+    internal static Atom WmIcon = Xlib.XInternAtom(Display, "_NET_WM_ICON", true);
 
 
     internal static XEventMask GeneralMask =
@@ -47,8 +49,11 @@ internal unsafe static class XUtility
         xcolor.green = color.G;
         xcolor.blue = color.B;
 
-        if (Xlib.XAllocColor(X11Globals.Display, X11Globals.DefaultColormap, ref xcolor) == 0)
-            throw new Exception("Failed to allocate color");
+        lock (Lock)
+        {
+            if (Xlib.XAllocColor(Display, DefaultColormap, ref xcolor) == 0)
+                throw new Exception("Failed to allocate color");
+        }
 
         return xcolor;
     }

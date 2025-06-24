@@ -8,6 +8,8 @@ using System.Runtime.Versioning;
 
 using TerraFX.Interop.Xlib;
 
+using static Prowl.Surface.Platforms.X11.X11PlatformImpl;
+
 namespace Prowl.Surface.Platforms.X11;
 
 
@@ -42,24 +44,26 @@ internal sealed unsafe class X11ScreenManager : ScreenManager
 
         X11Screen[] newScreens = [];
 
-        if (Xlib.QueryXRandr(X11Globals.Display, out _, out _))
+        lock (Lock)
         {
-            XRRMonitorInfo* monitors = Xlib.XRRGetMonitors(X11Globals.Display, X11Globals.RootWindow, true, out int monitorCount);
-            XRRScreenResources* resources = Xlib.XRRGetScreenResources(X11Globals.Display, X11Globals.RootWindow);
+            if (Xlib.QueryXRandr(Display, out _, out _))
+            {
+                XRRMonitorInfo* monitors = Xlib.XRRGetMonitors(Display, RootWindow, true, out int monitorCount);
+                XRRScreenResources* resources = Xlib.XRRGetScreenResources(Display, RootWindow);
 
-            newScreens = new X11Screen[monitorCount];
+                newScreens = new X11Screen[monitorCount];
 
-            for (int i = 0; i < monitorCount; i++)
-                newScreens[i] = new(monitors[i], resources);
+                for (int i = 0; i < monitorCount; i++)
+                    newScreens[i] = new(monitors[i], resources);
 
-            Xlib.XRRFreeScreenResources(resources);
-            Xlib.XRRFreeMonitors(monitors);
+                Xlib.XRRFreeScreenResources(resources);
+                Xlib.XRRFreeMonitors(monitors);
+            }
+            else
+            {
+                newScreens = [new()];
+            }
         }
-        else
-        {
-            newScreens = [new()];
-        }
-
 
         int left = int.MaxValue, top = int.MaxValue;
         int right = int.MinValue, bottom = int.MinValue;

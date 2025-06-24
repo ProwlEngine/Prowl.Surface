@@ -8,6 +8,8 @@ using System.Threading;
 
 using TerraFX.Interop.Xlib;
 
+using static Prowl.Surface.Platforms.X11.X11PlatformImpl;
+
 namespace Prowl.Surface.Platforms.X11;
 
 /// <summary>
@@ -23,20 +25,20 @@ internal unsafe class X11Dispatcher
         while (true)
         {
             if (blockOnWait)
-                Xlib.XNextEvent(X11Globals.Display, out xevent);
+                Xlib.XNextEvent(Display, out xevent);
 
-            bool hasEvent = Xlib.XPending(X11Globals.Display) != 0;
+            bool hasEvent = Xlib.XPending(Display) != 0;
 
             if (hasEvent || blockOnWait)
             {
                 if (!blockOnWait)
-                    Xlib.XNextEvent(X11Globals.Display, out xevent);
+                    Xlib.XNextEvent(Display, out xevent);
 
                 HandleEvent(xevent);
 
                 if (blockOnWait)
                 {
-                    hasEvent = Xlib.XPending(X11Globals.Display) != 0;
+                    hasEvent = Xlib.XPending(Display) != 0;
 
                     if (!hasEvent)
                         break;

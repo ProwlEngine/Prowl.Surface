@@ -5,8 +5,10 @@
 using System;
 using Prowl.Surface.Input;
 using System.Runtime.Versioning;
-using TerraFX.Interop.Xlib;
 using System.Linq;
+using TerraFX.Interop.Xlib;
+
+using static Prowl.Surface.Platforms.X11.X11PlatformImpl;
 
 namespace Prowl.Surface.Platforms.X11;
 
@@ -28,21 +30,24 @@ internal unsafe class X11Cursor : CursorImpl
         }
         else
         {
-            xcursor = Xlib.XCreateFontCursor(X11Globals.Display, cursorType switch
+            lock (Lock)
             {
-                CursorType.No => XCursorShape.X_cursor,
-                CursorType.Arrow => XCursorShape.left_ptr,
-                CursorType.Cross => XCursorShape.crosshair,
-                CursorType.IBeam => XCursorShape.xterm,
-                CursorType.SizeAll => XCursorShape.fleur,
-                CursorType.SizeNESW => XCursorShape.sizing,
-                CursorType.SizeNS => XCursorShape.sb_v_double_arrow,
-                CursorType.SizeNWSE => XCursorShape.sizing,
-                CursorType.SizeWE => XCursorShape.sb_h_double_arrow,
-                CursorType.Wait => XCursorShape.watch,
-                CursorType.Hand => XCursorShape.hand1,
-                _ => throw new ArgumentOutOfRangeException(nameof(cursorType), cursorType, null)
-            });
+                xcursor = Xlib.XCreateFontCursor(Display, cursorType switch
+                {
+                    CursorType.No => XCursorShape.X_cursor,
+                    CursorType.Arrow => XCursorShape.left_ptr,
+                    CursorType.Cross => XCursorShape.crosshair,
+                    CursorType.IBeam => XCursorShape.xterm,
+                    CursorType.SizeAll => XCursorShape.fleur,
+                    CursorType.SizeNESW => XCursorShape.sizing,
+                    CursorType.SizeNS => XCursorShape.sb_v_double_arrow,
+                    CursorType.SizeNWSE => XCursorShape.sizing,
+                    CursorType.SizeWE => XCursorShape.sb_h_double_arrow,
+                    CursorType.Wait => XCursorShape.watch,
+                    CursorType.Hand => XCursorShape.hand1,
+                    _ => throw new ArgumentOutOfRangeException(nameof(cursorType), cursorType, null)
+                });
+            }
         }
 
         return new(cursorType, xcursor);
@@ -57,13 +62,16 @@ internal unsafe class X11Cursor : CursorImpl
         fixed (byte* bytes = source.Select(x => x.A != 0 ? (byte)1 : (byte)0).ToArray())
         fixed (byte* maskbytes = source.Select(x => x.R + x.G + x.B != 0 ? (byte)1 : (byte)0).ToArray())
         {
-            XPixmap sourcemap = Xlib.XCreateBitmapFromData(X11Globals.Display, X11Globals.RootWindow, bytes, width, height);
-            XPixmap maskmap = Xlib.XCreateBitmapFromData(X11Globals.Display, X11Globals.RootWindow, maskbytes, width, height);
+            lock (Lock)
+            {
+                XPixmap sourcemap = Xlib.XCreateBitmapFromData(Display, RootWindow, bytes, width, height);
+                XPixmap maskmap = Xlib.XCreateBitmapFromData(Display, RootWindow, maskbytes, width, height);
 
-            Xlib.XAllocNamedColor(X11Globals.Display, X11Globals.DefaultColormap, "black", out _, out XColor foreground);
-            Xlib.XAllocNamedColor(X11Globals.Display, X11Globals.DefaultColormap, "white", out _, out XColor background);
+                Xlib.XAllocNamedColor(Display, DefaultColormap, "black", out _, out XColor foreground);
+                Xlib.XAllocNamedColor(Display, DefaultColormap, "white", out _, out XColor background);
 
-            return Xlib.XCreatePixmapCursor(X11Globals.Display, sourcemap, maskmap, ref foreground, ref background, hotx, hoty);
+                return Xlib.XCreatePixmapCursor(Display, sourcemap, maskmap, ref foreground, ref background, hotx, hoty);
+            }
         }
     }
 

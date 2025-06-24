@@ -6,6 +6,8 @@ using System.Runtime.Versioning;
 
 using TerraFX.Interop.Xlib;
 
+using static Prowl.Surface.Platforms.X11.X11PlatformImpl;
+
 namespace Prowl.Surface.Platforms.X11;
 
 
@@ -14,29 +16,35 @@ internal unsafe class X11Icon : IconImpl
 {
     public override Icon GetApplicationIcon()
     {
-        Xlib.XGetWindowProperty(X11Globals.Display, X11Globals.RootWindow, XUtility.WmIcon, 0, int.MaxValue,
-            false, Atom.NULL, out Atom actualType, out int actualFormat, out ulong nitems, out ulong bytesAfter, out byte* data);
-
-        if (actualFormat != 32 || data == null)
-            return new Icon(0, 0);
-
-        uint width = ((uint*)data)[0];
-        uint height = ((uint*)data)[1];
-
-        Icon icon = new Icon((int)width, (int)height);
-
-        for (int i = 0; i < width * height; i++)
+        lock (Lock)
         {
-            int idx = i * 4;
-            byte a = data[idx + 0];
-            byte r = data[idx + 1];
-            byte g = data[idx + 2];
-            byte b = data[idx + 3];
+            Xlib.XGetWindowProperty(Display, RootWindow, XUtility.WmIcon, 0, int.MaxValue,
+                false, Atom.NULL, out Atom actualType, out int actualFormat, out ulong nitems, out ulong bytesAfter, out byte* data);
 
-            icon.Buffer[i] = new Rgba32(r, g, b, a);
+            if (actualFormat != 32 || data == null)
+                return new Icon(0, 0);
+
+            uint width = ((uint*)data)[0];
+            uint height = ((uint*)data)[1];
+
+            Icon icon = new Icon((int)width, (int)height);
+
+            for (int i = 0; i < width * height; i++)
+            {
+                int idx = i * 4;
+                byte a = data[idx + 0];
+                byte r = data[idx + 1];
+                byte g = data[idx + 2];
+                byte b = data[idx + 3];
+
+                icon.Buffer[i] = new Rgba32(r, g, b, a);
+            }
+
+            Xlib.XFree(data);
+
+            return icon;
         }
 
-        return icon;
     }
 
 
@@ -59,14 +67,17 @@ internal unsafe class X11Icon : IconImpl
             }
         }
 
-        Xlib.XChangeProperty(
-            X11Globals.Display,
-            window,
-            XUtility.WmIcon,
-            Atom.XA_CARDINAL,
-            32,
-            Xlib.PropModeReplace,
-            (byte*)iconData,
-            iconDataLength);
+        lock (Lock)
+        {
+            Xlib.XChangeProperty(
+                Display,
+                window,
+                XUtility.WmIcon,
+                Atom.XA_CARDINAL,
+                32,
+                Xlib.PropModeReplace,
+                (byte*)iconData,
+                iconDataLength);
+        }
     }
 }

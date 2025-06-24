@@ -8,163 +8,194 @@ using System.Runtime.Versioning;
 
 using TerraFX.Interop.Xlib;
 
+using static Prowl.Surface.Platforms.X11.X11PlatformImpl;
+
 namespace Prowl.Surface.Platforms.X11;
 
 
 [SupportedOSPlatform("linux")]
 internal unsafe class X11Window : Window
 {
-    private bool _disposed;
+    private volatile bool _isDestroyed;
 
-    public override nint Handle { get; protected set; }
-    internal XWindow XWindow => (XWindow)Handle;
+    public override nint Handle { get => (nint)_xWindow.Value; }
+    internal XWindow _xWindow;
 
 
-    public X11Window(WindowCreateOptions options)
+    public X11Window(WindowCreateOptions options) : base(options)
     {
-        Size primaryScreenSize = PlatformImpl.ScreenManager.GetPrimaryScreen()?.SizeInPixels ?? Size.Empty;
+        Size primaryScreenSize = Screen.Primary?.SizeInPixels ?? System.Drawing.Size.Empty;
+
         Point position = options.Position ?? new(primaryScreenSize / 2);
         Size size = options.Size ?? new(400, 300);
 
-        XColor background = XUtility.GetColor(options.BackgroundColor ?? Color.Black);
+        VerifyNeedsParent();
 
-        // Setup window attributes
-        XSetWindowAttributes attr = new()
+        XWindow parentWindow = options.Kind switch
         {
-            background_pixel = background.pixel,
-            event_mask = XUtility.GeneralMask
+            WindowKind.TopLevel or WindowKind.Popup => RootWindow,
+            WindowKind.Child => ((X11Window)Parent!)._xWindow
         };
 
-        // Create the window (depth = CopyFromParent = 0)
-        Handle = Xlib.XCreateWindow(
-            X11Globals.Display,
-            X11Globals.RootWindow,
-            position.X, position.Y,
-            (uint)size.Width, (uint)size.Height,
-            0,
-            0,
-            Xlib.InputOutput,
-            null,
-            (nuint)(Xlib.CWBackPixel | Xlib.CWEventMask),
-            &attr
-        );
-
-        if (Handle == IntPtr.Zero)
+        lock (Lock)
         {
-            Console.WriteLine("Failed to create window");
-            return;
+            XSetWindowAttributes attr;
+
+            _xWindow = Xlib.XCreateWindow(
+                Display,
+                parentWindow,
+                position.X, position.Y,
+                (uint)size.Width, (uint)size.Height,
+                0,
+                0,
+                Xlib.InputOutput,
+                null,
+                (nuint)(Xlib.CWBackPixel | Xlib.CWEventMask),
+                &attr
+            );
+
+            if (_xWindow == XWindow.NULL)
+            {
+                Console.WriteLine("Failed to create window");
+                return;
+            }
+
+            X11EventHandler.RegisterWindow(this);
+
+            Atom deleteWindow = XUtility.WmDeleteWindow;
+            Xlib.XSetWMProtocols(Display, _xWindow, &deleteWindow, 1);
         }
-
-        Atom deleteWindow = XUtility.WmDeleteWindow;
-        Xlib.XSetWMProtocols(X11Globals.Display, XWindow, &deleteWindow, 1);
-
-        Title = options.Title;
 
         if (options.Icon != null)
             SetIcon(options.Icon);
 
-        Xlib.XMapWindow(X11Globals.Display, XWindow);
+        // Title = options.Title;
+        Enabled = true;
+        Visible = options.Visible;
     }
 
 
-    public override bool Decorations { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override Color BackgroundColor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override bool Enable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-    public override bool IsDisposed => _disposed;
-
-
-    private string _windowTitle;
-    public override string Title
+    private WindowKind _kind;
+    public override WindowKind Kind
     {
         get
         {
-            return _windowTitle;
+            VerifyNotDisposed();
+
+            return _kind;
+        }
+
+        protected set
+        {
+            _kind = value;
+        }
+    }
+
+    public override bool Decorations { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Dpi Dpi { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override DpiMode DpiMode { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+
+    public override bool Enabled
+    {
+        get
+        {
+            VerifyNotDisposed();
+
+            lock (Lock)
+            {
+                Xlib.XGetWindowAttributes(Display, _xWindow, out XWindowAttributes attribs);
+
+                return (attribs.your_event_mask & XUtility.GeneralMask) == XUtility.GeneralMask;
+            }
         }
 
         set
         {
-            if (_windowTitle == value)
+            VerifyNotDisposed();
+
+            lock (Lock)
+            {
+                Xlib.XSelectInput(Display, _xWindow, value ? XUtility.GeneralMask : XEventMask.SubstructureNotifyMask);
+            }
+        }
+    }
+
+    public override bool IsDisposed => _isDestroyed || (Parent?.IsDisposed ?? false);
+
+    public override string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override SizeF Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override SizeF ClientSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Point Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+
+    private bool _visible;
+    public override bool Visible
+    {
+        get
+        {
+            VerifyNotDisposed();
+
+            return _visible;
+        }
+
+        set
+        {
+            VerifyNotDisposed();
+
+            if (_visible == value)
                 return;
 
-            _windowTitle = value;
-            Xlib.XStoreName(X11Globals.Display, XWindow, _windowTitle);
-
-            fixed (byte* strBytes = System.Text.Encoding.UTF8.GetBytes(_windowTitle + '\0'))
+            lock (Lock)
             {
-                byte** strArray = stackalloc byte*[1];
-                strArray[0] = strBytes;
+                _visible = value;
 
-                Xlib.XStringListToTextProperty(strArray, 1, out XTextProperty property);
-                Xlib.XSetWMName(X11Globals.Display, XWindow, &property);
-                Xlib.XFree(property.value);
+                if (_visible)
+                    Xlib.XMapWindow(Display, _xWindow);
+                else
+                    Xlib.XUnmapWindow(Display, _xWindow);
             }
         }
     }
 
 
-    public override Size Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override Size ClientSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override Point Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-
-    public override bool Visible { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool DragDrop { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override bool Resizeable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override bool Maximizeable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override bool Minimizeable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-    public override INativeWindow? Parent => throw new NotImplementedException();
-
+    public override WindowCapabilities Capabilities { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override WindowState State { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-
-    private float _opacity;
-    public override float Opacity
-    {
-        get => _opacity;
-        set => SetOpacity(value);
-    }
-
-
-    private void SetOpacity(float value)
-    {
-        if (_opacity == value)
-            return;
-
-        _opacity = value;
-
-        ulong opacity = (ulong)(0xFFFFFFFFul * _opacity);
-
-        Xlib.XChangeProperty(X11Globals.Display, XWindow, XUtility.WmWindowOpacity, Atom.XA_CARDINAL, 32,
-            Xlib.PropModeReplace, (byte*)&opacity, 1);
-    }
-
-
+    public override float Opacity { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool TopMost { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override SizeF MinimumSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override SizeF MaximumSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Size MinimumSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Size MaximumSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool Modal { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool ShowInTaskBar { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override WindowKind Kind { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
 
-    public override void Activate() => throw new NotImplementedException();
-    public override void CenterToParent() => throw new NotImplementedException();
-    public override void CenterToScreen() => throw new NotImplementedException();
-    public override Point ClientToScreen(PointF position) => throw new NotImplementedException();
+
+    public override void Focus() => throw new NotImplementedException();
+
 
     public override bool Close()
     {
-        _disposed = true;
-        return Xlib.XDestroyWindow(X11Globals.Display, XWindow) != 0;
+        VerifyNotDisposed();
+
+        lock (Lock)
+        {
+            _isDestroyed = true;
+
+            X11EventHandler.RemoveWindow(this);
+            return Xlib.XDestroyWindow(Display, _xWindow) == 1;
+        }
     }
 
-    public override void Focus() => throw new NotImplementedException();
+
     public override Screen? GetScreen() => throw new NotImplementedException();
-    public override PointF ScreenToClient(Point position) => throw new NotImplementedException();
+    public override void CenterToParent() => throw new NotImplementedException();
+    public override void CenterToScreen() => throw new NotImplementedException();
+
 
     public override void SetIcon(Icon icon)
     {
-        X11Icon.SetWindowIcon(XWindow, icon);
+        VerifyNotDisposed();
+
+        X11Icon.SetWindowIcon(_xWindow, icon);
     }
 }
