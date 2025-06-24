@@ -86,7 +86,7 @@ internal sealed unsafe partial class Win32DropTarget : IDisposable
     {
         _dragDropEvent.DragDropKind = DragDropKind.Enter;
         _dragDropEvent.Effects = FromEffects(*pdwEffect);
-        _dragDropEvent.Position = _window.ScreenToClient(new Point(pt.x, pt.y));
+        // _dragDropEvent.Position = _window.ScreenToClient(new Point(pt.x, pt.y));
         _dragDropEvent.Data = null;
 
         if (pDataObj != null)

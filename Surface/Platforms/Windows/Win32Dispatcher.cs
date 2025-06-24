@@ -252,7 +252,7 @@ internal unsafe class Win32Dispatcher
 
         }
 
-        return updateScreens && PlatformImpl.ScreenManager.TryUpdateScreens();
+        return updateScreens && Platform.PlatformImpl.ScreenManager.TryUpdateScreens();
     }
 
     private LRESULT WindowProc(HWND hWnd, uint message, WPARAM wParam, LPARAM lParam)

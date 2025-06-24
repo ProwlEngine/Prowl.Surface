@@ -29,46 +29,39 @@ namespace Prowl.Surface.Platforms.Win32;
 [SupportedOSPlatform("windows10.0.14393.0")]
 internal unsafe class Win32Window : Window
 {
-    public Win32Window(WindowCreateOptions options)
+    public Win32Window(WindowCreateOptions options) : base(options)
     {
 
     }
 
-    public override nint Handle { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
+    public override nint Handle { get => throw new NotImplementedException(); }
     public override WindowKind Kind { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
     public override bool Decorations { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override Color BackgroundColor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override bool Enable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Dpi Dpi { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override DpiMode DpiMode { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override bool Enabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public override bool IsDisposed => throw new NotImplementedException();
 
     public override string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override Size Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override Size ClientSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override SizeF Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override SizeF ClientSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override Point Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool Visible { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool DragDrop { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override bool Resizeable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override bool Maximizeable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override bool Minimizeable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-    public override INativeWindow? Parent => throw new NotImplementedException();
-
+    public override WindowCapabilities Capabilities { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override WindowState State { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override float Opacity { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool TopMost { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override SizeF MinimumSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public override SizeF MaximumSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Size MinimumSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Size MaximumSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool Modal { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override bool ShowInTaskBar { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public override void Activate() => throw new NotImplementedException();
     public override void CenterToParent() => throw new NotImplementedException();
     public override void CenterToScreen() => throw new NotImplementedException();
-    public override Point ClientToScreen(PointF position) => throw new NotImplementedException();
     public override bool Close() => throw new NotImplementedException();
     public override void Focus() => throw new NotImplementedException();
     public override Screen? GetScreen() => throw new NotImplementedException();
-    public override PointF ScreenToClient(Point position) => throw new NotImplementedException();
     public override void SetIcon(Icon icon) => throw new NotImplementedException();
 }

@@ -9,9 +9,5 @@ namespace Prowl.Surface.Platforms.Win32;
 
 internal unsafe class Win32EventHandler : EventHandler
 {
-    public override bool PollEvent(out WindowEvent windowEvent)
-    {
-        windowEvent = default;
-        return false;
-    }
+    internal override bool PollEvent(out WindowEvent ev) => throw new NotImplementedException();
 }
